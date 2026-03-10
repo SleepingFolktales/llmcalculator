@@ -22,7 +22,7 @@ class GPURecommendation(BaseModel):
 class CPURecommendation(BaseModel):
     """CPU hardware recommendation."""
     name: str
-    cores: int
+    cores_total: int
     memory_bandwidth_gbps: float
     tdp_watts: int
     msrp_usd: Optional[int]
