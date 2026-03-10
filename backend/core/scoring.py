@@ -248,12 +248,41 @@ def calculate_tier(
     
     fit_notes = generate_fit_notes(tier_name, gpu, n_gpus, run_mode, recommended_quant)
     
+    # Extract only the fields GPUSpec/CPUSpec expect
+    gpu_spec = None
+    if gpu:
+        gpu_spec = GPUSpec(
+            id=gpu['id'],
+            name=gpu['name'],
+            short_name=gpu['short_name'],
+            brand=gpu['brand'],
+            vram_gb=gpu['vram_gb'],
+            vram_bandwidth_gbps=gpu['vram_bandwidth_gbps'],
+            tdp_watts=gpu['tdp_watts'],
+            msrp_usd=gpu.get('msrp_usd'),
+            form_factor=gpu.get('form_factor', 'PCIe'),
+            backends=gpu.get('backends', ['llama.cpp', 'vllm', 'exllama']),
+        )
+    
+    cpu_spec = None
+    if cpu:
+        cpu_spec = CPUSpec(
+            id=cpu['id'],
+            name=cpu['name'],
+            short_name=cpu.get('short_name', cpu['name']),
+            cores_total=cpu.get('cores_total', cpu.get('cores', 8)),  # Support both field names
+            memory_bandwidth_gbps=cpu['memory_bandwidth_gbps'],
+            tdp_watts=cpu['tdp_watts'],
+            msrp_usd=cpu.get('msrp_usd'),
+            max_ram_gb=cpu.get('max_ram_gb', 128),
+        )
+    
     return HardwareTier(
         tier=tier_name,
-        gpu=GPUSpec(**gpu) if gpu else None,
+        gpu=gpu_spec,
         n_gpus=n_gpus,
         vram_total_gb=vram_total,
-        cpu=CPUSpec(**cpu) if cpu else None,
+        cpu=cpu_spec,
         ram_gb=ram_gb,
         ram_type=ram_type,
         estimated_tps_per_instance=tps,

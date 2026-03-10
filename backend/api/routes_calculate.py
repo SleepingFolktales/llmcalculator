@@ -111,7 +111,7 @@ async def calculate_hardware(request: CalculationRequest):
         if tier.cpu:
             cpu_rec = CPURecommendation(
                 name=tier.cpu.name,
-                cores=tier.cpu.cores_total,
+                cores_total=tier.cpu.cores_total,  # Fixed: use cores_total not cores
                 memory_bandwidth_gbps=tier.cpu.memory_bandwidth_gbps,
                 tdp_watts=tier.cpu.tdp_watts,
                 msrp_usd=tier.cpu.msrp_usd,

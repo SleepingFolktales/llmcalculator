@@ -27,6 +27,7 @@ async def lifespan(app: FastAPI):
     print(f"Loaded {len(loader.get_all_models())} models")
     print(f"Loaded {len(loader.get_all_gpus())} GPUs")
     print(f"Loaded {len(loader.get_all_cpus())} CPUs")
+    print(f"Loaded {len(loader.ram_specs)} RAM specs")
     print("Server ready!")
     yield
     print("Shutting down...")
