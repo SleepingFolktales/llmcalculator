@@ -111,7 +111,7 @@ export default function TierCard({ tier }: TierCardProps) {
         <div className="w-full bg-gray-700 rounded-full h-2">
           <div
             className="bg-blue-500 h-2 rounded-full transition-all"
-            style={{ width: `${(tier.vram_used_gb / tier.vram_total_gb) * 100}%` }}
+            style={{ width: `${Math.min(100, (tier.vram_used_gb / tier.vram_total_gb) * 100)}%` } as React.CSSProperties}
           ></div>
         </div>
       </div>
