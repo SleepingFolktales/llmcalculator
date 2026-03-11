@@ -188,15 +188,19 @@ export interface SupercomputerRecommendations {
   best: SupercomputerTierOutput | null
 }
 
+export interface TierRecommendations {
+  desktop: HardwareTierOutput
+  laptop: LaptopTierOutput | null
+  supercomputer: SupercomputerTierOutput | null
+}
+
 export interface CalculationResponse {
   scenario_summary: string
   deployment_mode: string
   model_breakdown: ScenarioBreakdown[]
-  minimum: HardwareTierOutput
-  ideal: HardwareTierOutput
-  best: HardwareTierOutput
-  laptop_hardware: LaptopHardwareRecommendations
-  supercomputer_hardware: SupercomputerRecommendations
+  minimum: TierRecommendations
+  ideal: TierRecommendations
+  best: TierRecommendations
   upgrade_path: string[]
   calculation_notes: string[]
   data_freshness: string

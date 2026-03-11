@@ -1,262 +1,193 @@
-import { CalculationResponse } from '../../types/api'
-import TierCard from './TierCard'
-import LaptopHardwarePanel from './LaptopHardwarePanel'
-import SupercomputerPanel from './SupercomputerPanel'
-import { Download } from 'lucide-react'
+import React, { useState } from 'react'
+import { Download, Cpu, Laptop, Server, ChevronRight, DollarSign, Zap } from 'lucide-react'
+import type { CalculationResponse, TierRecommendations } from '../../types/api'
+import { HardwareDetailModal } from './HardwareDetailModal'
 
 interface ResultsPanelProps {
   results: CalculationResponse
 }
 
 export default function ResultsPanel({ results }: ResultsPanelProps) {
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean
+    title: string
+    hardware: any
+    type: 'desktop' | 'laptop' | 'supercomputer'
+  }>({
+    isOpen: false,
+    title: '',
+    hardware: null,
+    type: 'desktop'
+  })
+
+  const openModal = (title: string, hardware: any, type: 'desktop' | 'laptop' | 'supercomputer') => {
+    setModalState({ isOpen: true, title, hardware, type })
+  }
+
+  const closeModal = () => {
+    setModalState({ ...modalState, isOpen: false })
+  }
+
+  const getTierColor = (tierName: string) => {
+    switch(tierName.toLowerCase()) {
+      case 'minimum': return 'blue'
+      case 'ideal': return 'green'
+      case 'best': return 'purple'
+      default: return 'gray'
+    }
+  }
+
+  const TierCard = ({ tier, tierName }: { tier: TierRecommendations, tierName: string }) => {
+    const color = getTierColor(tierName)
+    const desktop = tier.desktop
+    
+    return (
+      <div className={`bg-gray-800 rounded-xl border-2 border-${color}-500/30 overflow-hidden`}>
+        <div className={`bg-${color}-600/20 border-b border-${color}-500/30 px-6 py-4`}>
+          <h3 className={`text-xl font-bold text-${color}-400 uppercase tracking-wide`}>{tierName}</h3>
+          <p className="text-sm text-gray-300 mt-1">{desktop.tier_label}</p>
+        </div>
+
+        <div className="p-6 space-y-4">
+          {/* Desktop Hardware */}
+          <button
+            onClick={() => openModal(`${tierName} - Desktop Hardware`, desktop, 'desktop')}
+            className="w-full bg-gray-700/50 hover:bg-gray-700 rounded-lg p-4 transition-colors text-left group"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-600/20 rounded-lg">
+                  <Cpu className="w-5 h-5 text-blue-400" />
+                </div>
+                <div>
+                  <p className="font-semibold text-white">Desktop Hardware</p>
+                  <p className="text-sm text-gray-400">{desktop.gpu?.name || 'N/A'}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="text-right">
+                  <p className="text-xs text-gray-400">Est. Cost</p>
+                  <p className="font-bold text-white">${desktop.estimated_cost_usd?.toLocaleString() || 'N/A'}</p>
+                </div>
+                <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
+              </div>
+            </div>
+          </button>
+
+          {/* Laptop Hardware */}
+          {tier.laptop ? (
+            <button
+              onClick={() => openModal(`${tierName} - Laptop Hardware`, tier.laptop, 'laptop')}
+              className="w-full bg-gray-700/50 hover:bg-gray-700 rounded-lg p-4 transition-colors text-left group"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-purple-600/20 rounded-lg">
+                    <Laptop className="w-5 h-5 text-purple-400" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-white">Laptop Option</p>
+                    <p className="text-sm text-gray-400">{tier.laptop.laptop_gpu?.short_name || 'N/A'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="text-right">
+                    <p className="text-xs text-gray-400">Est. Speed</p>
+                    <p className="font-bold text-white">{tier.laptop.estimated_tps?.toFixed(0) || 'N/A'} tok/s</p>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
+                </div>
+              </div>
+            </button>
+          ) : (
+            <div className="w-full bg-gray-700/30 rounded-lg p-4 border border-gray-600/50">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-gray-600/20 rounded-lg">
+                  <Laptop className="w-5 h-5 text-gray-500" />
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-400">Laptop Option</p>
+                  <p className="text-xs text-gray-500">VRAM requirements exceed laptop GPU capabilities</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Supercomputer Hardware */}
+          {tier.supercomputer && (
+            <button
+              onClick={() => openModal(`${tierName} - Supercomputer`, tier.supercomputer, 'supercomputer')}
+              className="w-full bg-gray-700/50 hover:bg-gray-700 rounded-lg p-4 transition-colors text-left group"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-orange-600/20 rounded-lg">
+                    <Server className="w-5 h-5 text-orange-400" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-white">Supercomputer Option</p>
+                    <p className="text-sm text-gray-400">{tier.supercomputer.system.short_name}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="text-right">
+                    <p className="text-xs text-gray-400">VRAM</p>
+                    <p className="font-bold text-white">{tier.supercomputer.system.total_vram_gb}GB</p>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
+                </div>
+              </div>
+            </button>
+          )}
+
+          {/* Quick Stats */}
+          <div className="grid grid-cols-3 gap-3 pt-2 border-t border-gray-700">
+            <div className="text-center">
+              <p className="text-xs text-gray-400">Power</p>
+              <p className="text-sm font-semibold text-white">{desktop.power?.total_watts || 0}W</p>
+            </div>
+            <div className="text-center">
+              <p className="text-xs text-gray-400">VRAM</p>
+              <p className="text-sm font-semibold text-white">{desktop.vram_total_gb?.toFixed(0) || 0}GB</p>
+            </div>
+            <div className="text-center">
+              <p className="text-xs text-gray-400">Speed</p>
+              <p className="text-sm font-semibold text-white">{desktop.performance?.total_system_tps?.toFixed(0) || 0} tok/s</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   const handleDownload = () => {
-    try {
-      const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
-      const filename = `llm-calculator-results-${timestamp}.txt`
-
-    const formatMoney = (amount?: number) => {
-      if (amount === undefined || amount === null) return 'N/A'
-      return `$${amount.toLocaleString()}`
-    }
-
-    const formatNumber = (num: number) => num.toLocaleString()
-
-    // Safe access helpers for laptop hardware
-    const safeJoin = (arr: string[] | undefined | null, separator = ', ') => {
-      if (!arr || !Array.isArray(arr)) return 'N/A'
-      return arr.slice(0, 3).join(separator)
-    }
-
-    const safeFixed = (num: number | undefined | null, digits = 1) => {
-      if (num === undefined || num === null || isNaN(num)) return 'N/A'
-      return num.toFixed(digits)
-    }
-
-    const generateTierSection = (tier: CalculationResponse['minimum'], tierName: string) => {
-      const gpu = tier.gpu
-      const cpu = tier.cpu
-      const perf = tier.performance
-      const power = tier.power
-
-      return `
-================================================================================
-${tierName.toUpperCase()} TIER - ${tier.tier_label}
-================================================================================
-${tier.tier_description}
-
-HARDWARE SPECIFICATIONS:
-------------------------
-GPU: ${gpu ? `${gpu.name} (${gpu.short_name})` : 'None'}
-${gpu ? `  - VRAM: ${formatNumber(gpu.vram_gb)} GB per unit (${formatNumber(gpu.total_vram_gb)} GB total)` : ''}
-${gpu ? `  - Units: ${gpu.n_units} GPU(s)` : ''}
-${gpu ? `  - Bandwidth: ${gpu.vram_bandwidth_gbps} Gbps` : ''}
-${gpu ? `  - TDP: ${gpu.tdp_watts} W` : ''}
-${gpu ? `  - Form Factor: ${gpu.form_factor}` : ''}
-
-CPU: ${cpu ? cpu.name : 'None'}
-${cpu ? `  - Cores: ${formatNumber(cpu.cores_total)}` : ''}
-${cpu ? `  - Memory Bandwidth: ${cpu.memory_bandwidth_gbps} Gbps` : ''}
-${cpu ? `  - TDP: ${cpu.tdp_watts} W` : ''}
-${cpu ? `  - Max RAM: ${formatNumber(cpu.max_ram_gb)} GB` : ''}
-
-RAM: ${formatNumber(tier.ram_gb)} GB (${tier.ram_type})
-VRAM Usage: ${formatNumber(tier.vram_used_gb)} GB / ${formatNumber(tier.vram_total_gb)} GB (${tier.vram_headroom_pct.toFixed(1)}% headroom)
-RAM Usage: ${formatNumber(tier.ram_used_gb)} GB
-
-PERFORMANCE ESTIMATES:
-----------------------
-Per Instance TPS: ${formatNumber(perf.per_instance_tps)}
-Total System TPS: ${formatNumber(perf.total_system_tps)}
-Latency (First Token): ${formatNumber(perf.latency_first_token_ms)} ms
-Latency (Per Token): ${formatNumber(perf.latency_per_token_ms)} ms
-Run Mode: ${perf.run_mode}
-Recommended Quantization: ${perf.recommended_quant}
-Quality Note: ${perf.quant_quality_note}
-
-POWER & COST:
--------------
-Power Consumption:
-  - Total: ${formatNumber(power.total_watts)} W
-  - GPU: ${formatNumber(power.gpu_watts)} W
-  - CPU: ${formatNumber(power.cpu_watts)} W
-  - Monthly: ${power.monthly_kwh.toFixed(1)} kWh${power.monthly_cost_usd ? ` (~$${power.monthly_cost_usd.toFixed(2)}/month at $0.12/kWh)` : ''}
-Thermal Note: ${power.thermal_note}
-
-Estimated Cost: ${formatMoney(tier.estimated_cost_usd)}
-
-NOTES:
-------
-Bottleneck: ${tier.bottleneck || 'None identified'}
-Fit Notes: ${tier.fit_notes.length > 0 ? tier.fit_notes.join(', ') : 'None'}
-Trade-offs: ${tier.trade_offs}
-`
-    }
-
-    const content = `================================================================================
-                    LLM HARDWARE CALCULATOR REPORT
-================================================================================
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
+    const filename = `llm-calc-${timestamp}.txt`
+    const content = `LLM Hardware Calculator Results
 Generated: ${new Date().toLocaleString()}
-Data Freshness: ${results.data_freshness}
 
-================================================================================
-                          SCENARIO SUMMARY
-================================================================================
-${results.scenario_summary}
+Scenario: ${results.scenario_summary}
+Deployment: ${results.deployment_mode}
 
-Deployment Mode: ${results.deployment_mode}
-Total Models: ${results.model_breakdown.length}
+=== MINIMUM TIER ===
+${results.minimum.desktop.tier_label}
+Cost: $${results.minimum.desktop.estimated_cost_usd?.toLocaleString()}
+GPU: ${results.minimum.desktop.gpu?.name}
 
-================================================================================
-                          MODEL BREAKDOWN
-================================================================================
-${results.model_breakdown.map((model, index) => `
-Model ${index + 1}: ${model.model_name}
-  - Provider: ${model.provider}
-  - Parameters: ${model.params_b}B
-  - Instances: ${model.n_instances}
-  - Quantization: ${model.quant_used}
-  - Memory per Instance: ${model.memory_per_instance_gb.toFixed(1)} GB
-  - Total Memory: ${model.total_memory_gb.toFixed(1)} GB
-  - MoE Model: ${model.is_moe ? 'Yes' : 'No'}${model.moe_note ? ` (${model.moe_note})` : ''}
-`).join('')}
+=== IDEAL TIER ===
+${results.ideal.desktop.tier_label}
+Cost: $${results.ideal.desktop.estimated_cost_usd?.toLocaleString()}
+GPU: ${results.ideal.desktop.gpu?.name}
 
-${generateTierSection(results.minimum, 'Minimum')}
+=== BEST TIER ===
+${results.best.desktop.tier_label}
+Cost: $${results.best.desktop.estimated_cost_usd?.toLocaleString()}
+GPU: ${results.best.desktop.gpu?.name}
 
-${generateTierSection(results.ideal, 'Ideal')}
-
-${generateTierSection(results.best, 'Best')}
-
-================================================================================
-                          UPGRADE PATH
-================================================================================
-${results.upgrade_path.length > 0 ? results.upgrade_path.map((path, index) => `${index + 1}. ${path}`).join('\n') : 'No upgrade path suggested for this configuration.'}
-
-${results.laptop_hardware ? `
-================================================================================
-                    LAPTOP & PORTABLE HARDWARE OPTIONS
-================================================================================
-
-${results.laptop_hardware?.minimum ? `
-MINIMUM LAPTOP CONFIGURATION:
------------------------------
-GPU: ${results.laptop_hardware.minimum.laptop_gpu?.short_name || 'N/A'}
-  - Brand: ${results.laptop_hardware.minimum.laptop_gpu?.brand || 'N/A'}
-  - Form Factor: ${results.laptop_hardware.minimum.laptop_gpu?.form_factor || 'N/A'}
-  - VRAM: ${results.laptop_hardware.minimum.laptop_gpu?.vram_gb ? `${results.laptop_hardware.minimum.laptop_gpu.vram_gb} GB` : results.laptop_hardware.minimum.laptop_gpu?.unified_memory_max_gb ? `${results.laptop_hardware.minimum.laptop_gpu.unified_memory_max_gb} GB Unified Memory` : 'N/A'}
-  - Bandwidth: ${safeFixed(results.laptop_hardware.minimum.laptop_gpu?.bandwidth_gbps)} GB/s
-  - Estimated Speed: ${safeFixed(results.laptop_hardware.minimum.estimated_tps)} tok/s
-  - Price: ${results.laptop_hardware.minimum.laptop_gpu?.typical_laptop_price_usd ? `$${results.laptop_hardware.minimum.laptop_gpu.typical_laptop_price_usd}` : 'N/A'}
-  - Found in: ${safeJoin(results.laptop_hardware.minimum.laptop_gpu?.typical_laptop_brands)}
-  - Backends: ${safeJoin(results.laptop_hardware.minimum.laptop_gpu?.backends)}
-
-` : ''}${results.laptop_hardware?.ideal ? `
-IDEAL LAPTOP CONFIGURATION:
----------------------------
-GPU: ${results.laptop_hardware.ideal.laptop_gpu?.short_name || 'N/A'}
-  - Brand: ${results.laptop_hardware.ideal.laptop_gpu?.brand || 'N/A'}
-  - Form Factor: ${results.laptop_hardware.ideal.laptop_gpu?.form_factor || 'N/A'}
-  - VRAM: ${results.laptop_hardware.ideal.laptop_gpu?.vram_gb ? `${results.laptop_hardware.ideal.laptop_gpu.vram_gb} GB` : results.laptop_hardware.ideal.laptop_gpu?.unified_memory_max_gb ? `${results.laptop_hardware.ideal.laptop_gpu.unified_memory_max_gb} GB Unified Memory` : 'N/A'}
-  - Bandwidth: ${safeFixed(results.laptop_hardware.ideal.laptop_gpu?.bandwidth_gbps)} GB/s
-  - Estimated Speed: ${safeFixed(results.laptop_hardware.ideal.estimated_tps)} tok/s
-  - Price: ${results.laptop_hardware.ideal.laptop_gpu?.typical_laptop_price_usd ? `$${results.laptop_hardware.ideal.laptop_gpu.typical_laptop_price_usd}` : 'N/A'}
-  - Found in: ${safeJoin(results.laptop_hardware.ideal.laptop_gpu?.typical_laptop_brands)}
-  - Backends: ${safeJoin(results.laptop_hardware.ideal.laptop_gpu?.backends)}
-
-` : ''}${results.laptop_hardware?.best ? `
-BEST LAPTOP CONFIGURATION:
---------------------------
-GPU: ${results.laptop_hardware.best.laptop_gpu?.short_name || 'N/A'}
-  - Brand: ${results.laptop_hardware.best.laptop_gpu?.brand || 'N/A'}
-  - Form Factor: ${results.laptop_hardware.best.laptop_gpu?.form_factor || 'N/A'}
-  - VRAM: ${results.laptop_hardware.best.laptop_gpu?.vram_gb ? `${results.laptop_hardware.best.laptop_gpu.vram_gb} GB` : results.laptop_hardware.best.laptop_gpu?.unified_memory_max_gb ? `${results.laptop_hardware.best.laptop_gpu.unified_memory_max_gb} GB Unified Memory` : 'N/A'}
-  - Bandwidth: ${safeFixed(results.laptop_hardware.best.laptop_gpu?.bandwidth_gbps)} GB/s
-  - Estimated Speed: ${safeFixed(results.laptop_hardware.best.estimated_tps)} tok/s
-  - Price: ${results.laptop_hardware.best.laptop_gpu?.typical_laptop_price_usd ? `$${results.laptop_hardware.best.laptop_gpu.typical_laptop_price_usd}` : 'N/A'}
-  - Found in: ${safeJoin(results.laptop_hardware.best.laptop_gpu?.typical_laptop_brands)}
-  - Backends: ${safeJoin(results.laptop_hardware.best.laptop_gpu?.backends)}
-
-` : ''}${results.laptop_hardware?.raspberry_pi ? `
-RASPBERRY PI OPTION (Edge Computing):
---------------------------------------
-Device: ${results.laptop_hardware.raspberry_pi?.device || 'N/A'}
-  - CPU: ${results.laptop_hardware.raspberry_pi?.cpu || 'N/A'}
-  - RAM: ${results.laptop_hardware.raspberry_pi?.ram_gb || 'N/A'} GB
-  - Power: ${results.laptop_hardware.raspberry_pi?.power_consumption_watts || 'N/A'}W
-  - Estimated Speed: ~${safeFixed(results.laptop_hardware.raspberry_pi?.estimated_tps)} tok/s (CPU-only)
-  - Price: $${results.laptop_hardware.raspberry_pi?.typical_price_usd || 'N/A'}
-  - Note: ${results.laptop_hardware.raspberry_pi?.notes || 'N/A'}
-
-` : ''}` : ''}
-${results.supercomputer_hardware ? `
-================================================================================
-                    SUPERCOMPUTER & AI ACCELERATOR OPTIONS
-================================================================================
-
-${results.supercomputer_hardware?.minimum ? `
-MINIMUM SUPERCOMPUTER CONFIGURATION:
-------------------------------------
-System: ${results.supercomputer_hardware.minimum.system.name}
-  - Brand: ${results.supercomputer_hardware.minimum.system.brand}
-  - Model: ${results.supercomputer_hardware.minimum.system.short_name}
-  - Category: ${results.supercomputer_hardware.minimum.system.category.replace('_', ' ').toUpperCase()}
-  - Form Factor: ${results.supercomputer_hardware.minimum.system.form_factor.replace('_', ' ')}
-  - Total VRAM: ${results.supercomputer_hardware.minimum.system.total_vram_gb >= 1000 ? `${(results.supercomputer_hardware.minimum.system.total_vram_gb / 1024).toFixed(1)} TB` : `${results.supercomputer_hardware.minimum.system.total_vram_gb.toFixed(0)} GB`}
-  - Memory Bandwidth: ${results.supercomputer_hardware.minimum.system.vram_bandwidth_tbps ? `${results.supercomputer_hardware.minimum.system.vram_bandwidth_tbps.toFixed(1)} TB/s` : 'N/A'}
-  - Power: ${results.supercomputer_hardware.minimum.system.power_watts >= 1000 ? `${(results.supercomputer_hardware.minimum.system.power_watts / 1000).toFixed(1)} kW` : `${results.supercomputer_hardware.minimum.system.power_watts} W`}
-  - Price: ${results.supercomputer_hardware.minimum.system.msrp_usd ? `$${results.supercomputer_hardware.minimum.system.msrp_usd.toLocaleString()}` : 'Contact Vendor'}
-  - Backends: ${safeJoin(results.supercomputer_hardware.minimum.system.backends)}
-  - Use Cases: ${safeJoin(results.supercomputer_hardware.minimum.system.use_cases)}
-  - Why: ${results.supercomputer_hardware.minimum.fit_rationale}
-  - Notes: ${results.supercomputer_hardware.minimum.system.notes}
-
-` : ''}${results.supercomputer_hardware?.ideal ? `
-IDEAL SUPERCOMPUTER CONFIGURATION:
------------------------------------
-System: ${results.supercomputer_hardware.ideal.system.name}
-  - Brand: ${results.supercomputer_hardware.ideal.system.brand}
-  - Model: ${results.supercomputer_hardware.ideal.system.short_name}
-  - Category: ${results.supercomputer_hardware.ideal.system.category.replace('_', ' ').toUpperCase()}
-  - Form Factor: ${results.supercomputer_hardware.ideal.system.form_factor.replace('_', ' ')}
-  - Total VRAM: ${results.supercomputer_hardware.ideal.system.total_vram_gb >= 1000 ? `${(results.supercomputer_hardware.ideal.system.total_vram_gb / 1024).toFixed(1)} TB` : `${results.supercomputer_hardware.ideal.system.total_vram_gb.toFixed(0)} GB`}
-  - Memory Bandwidth: ${results.supercomputer_hardware.ideal.system.vram_bandwidth_tbps ? `${results.supercomputer_hardware.ideal.system.vram_bandwidth_tbps.toFixed(1)} TB/s` : 'N/A'}
-  - Power: ${results.supercomputer_hardware.ideal.system.power_watts >= 1000 ? `${(results.supercomputer_hardware.ideal.system.power_watts / 1000).toFixed(1)} kW` : `${results.supercomputer_hardware.ideal.system.power_watts} W`}
-  - Price: ${results.supercomputer_hardware.ideal.system.msrp_usd ? `$${results.supercomputer_hardware.ideal.system.msrp_usd.toLocaleString()}` : 'Contact Vendor'}
-  - Backends: ${safeJoin(results.supercomputer_hardware.ideal.system.backends)}
-  - Use Cases: ${safeJoin(results.supercomputer_hardware.ideal.system.use_cases)}
-  - Why: ${results.supercomputer_hardware.ideal.fit_rationale}
-  - Notes: ${results.supercomputer_hardware.ideal.system.notes}
-
-` : ''}${results.supercomputer_hardware?.best ? `
-BEST SUPERCOMPUTER CONFIGURATION:
-----------------------------------
-System: ${results.supercomputer_hardware.best.system.name}
-  - Brand: ${results.supercomputer_hardware.best.system.brand}
-  - Model: ${results.supercomputer_hardware.best.system.short_name}
-  - Category: ${results.supercomputer_hardware.best.system.category.replace('_', ' ').toUpperCase()}
-  - Form Factor: ${results.supercomputer_hardware.best.system.form_factor.replace('_', ' ')}
-  - Total VRAM: ${results.supercomputer_hardware.best.system.total_vram_gb >= 1000 ? `${(results.supercomputer_hardware.best.system.total_vram_gb / 1024).toFixed(1)} TB` : `${results.supercomputer_hardware.best.system.total_vram_gb.toFixed(0)} GB`}
-  - Memory Bandwidth: ${results.supercomputer_hardware.best.system.vram_bandwidth_tbps ? `${results.supercomputer_hardware.best.system.vram_bandwidth_tbps.toFixed(1)} TB/s` : 'N/A'}
-  - Power: ${results.supercomputer_hardware.best.system.power_watts >= 1000 ? `${(results.supercomputer_hardware.best.system.power_watts / 1000).toFixed(1)} kW` : `${results.supercomputer_hardware.best.system.power_watts} W`}
-  - Price: ${results.supercomputer_hardware.best.system.msrp_usd ? `$${results.supercomputer_hardware.best.system.msrp_usd.toLocaleString()}` : 'Contact Vendor'}
-  - Backends: ${safeJoin(results.supercomputer_hardware.best.system.backends)}
-  - Use Cases: ${safeJoin(results.supercomputer_hardware.best.system.use_cases)}
-  - Why: ${results.supercomputer_hardware.best.fit_rationale}
-  - Notes: ${results.supercomputer_hardware.best.system.notes}
-
-` : ''}` : ''}
-================================================================================
-                          CALCULATION NOTES
-================================================================================
-${results.calculation_notes.map((note, index) => `• ${note}`).join('\n')}
-
-================================================================================
-                              END OF REPORT
-================================================================================
-Generated by LLM Hardware Calculator
-https://github.com/yourusername/llmcalculator
+Upgrade Path:
+${results.upgrade_path.join('\n')}
 `
-
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
+    const blob = new Blob([content], { type: 'text/plain' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
@@ -265,28 +196,25 @@ https://github.com/yourusername/llmcalculator
     link.click()
     document.body.removeChild(link)
     URL.revokeObjectURL(url)
-    } catch (err) {
-      console.error('Download failed:', err)
-      alert('Failed to download results. Check console for details.')
-    }
   }
 
   return (
     <div className="space-y-6">
-      {/* Scenario Summary */}
+      {/* Header with Download */}
       <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 p-6">
         <div className="flex items-start justify-between gap-4 mb-2">
-          <h3 className="text-lg font-semibold text-white">Scenario Summary</h3>
+          <div>
+            <h3 className="text-lg font-semibold text-white">Hardware Recommendations</h3>
+            <p className="text-sm text-gray-400 mt-1">{results.scenario_summary}</p>
+          </div>
           <button
             onClick={handleDownload}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-colors"
-            title="Download results as text file"
           >
             <Download className="w-4 h-4" />
-            Download Results
+            Download
           </button>
         </div>
-        <p className="text-gray-300">{results.scenario_summary}</p>
         <div className="mt-4 flex items-center gap-2 text-sm text-gray-400">
           <span className="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full">
             {results.deployment_mode}
@@ -296,22 +224,12 @@ https://github.com/yourusername/llmcalculator
         </div>
       </div>
 
-      {/* Three Tier Cards */}
-      <div className="space-y-4">
-        <TierCard tier={results.minimum} />
-        <TierCard tier={results.ideal} />
-        <TierCard tier={results.best} />
+      {/* Tier Cards */}
+      <div className="grid gap-6">
+        <TierCard tier={results.minimum} tierName="Minimum" />
+        <TierCard tier={results.ideal} tierName="Ideal" />
+        <TierCard tier={results.best} tierName="Best" />
       </div>
-
-      {/* Laptop Hardware Recommendations */}
-      {results.laptop_hardware && (
-        <LaptopHardwarePanel laptopHardware={results.laptop_hardware} />
-      )}
-
-      {/* Supercomputer Recommendations */}
-      {results.supercomputer_hardware && (
-        <SupercomputerPanel recommendations={results.supercomputer_hardware} />
-      )}
 
       {/* Upgrade Path */}
       {results.upgrade_path.length > 0 && (
@@ -327,6 +245,15 @@ https://github.com/yourusername/llmcalculator
           </ul>
         </div>
       )}
+
+      {/* Modal */}
+      <HardwareDetailModal
+        isOpen={modalState.isOpen}
+        onClose={closeModal}
+        title={modalState.title}
+        hardware={modalState.hardware}
+        type={modalState.type}
+      />
     </div>
   )
 }

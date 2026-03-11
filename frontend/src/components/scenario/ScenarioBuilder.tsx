@@ -163,7 +163,7 @@ export default function ScenarioBuilder({ onCalculate, isCalculating }: Scenario
             model_name: '',
             n_instances: 1,
             context_tokens: 4096,
-            precision_format: 'fp16',
+            precision_format: 'fp32',
             use_case: 'general',
           })}
           className="w-full flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg px-4 py-2 transition-colors"

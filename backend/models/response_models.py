@@ -171,6 +171,13 @@ class SupercomputerRecommendations(BaseModel):
     best: Optional[SupercomputerTierOutput]
 
 
+class TierRecommendations(BaseModel):
+    """Unified tier recommendations across all hardware types."""
+    desktop: HardwareTierOutput
+    laptop: Optional[LaptopTierOutput]
+    supercomputer: Optional[SupercomputerTierOutput]
+
+
 class CalculationResponse(BaseModel):
     """Complete calculation response."""
     scenario_summary: str
@@ -178,12 +185,9 @@ class CalculationResponse(BaseModel):
     
     model_breakdown: List[ScenarioBreakdown]
     
-    minimum: HardwareTierOutput
-    ideal: HardwareTierOutput
-    best: HardwareTierOutput
-    
-    laptop_hardware: LaptopHardwareRecommendations
-    supercomputer_hardware: SupercomputerRecommendations
+    minimum: TierRecommendations
+    ideal: TierRecommendations
+    best: TierRecommendations
     
     upgrade_path: List[str]
     

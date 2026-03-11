@@ -26,7 +26,7 @@ const initialInstance: ModelInstanceInput = {
   model_name: '',
   n_instances: 1,
   context_tokens: 4096,
-  precision_format: 'fp16',
+  precision_format: 'fp32',
   use_case: 'general',
 }
 

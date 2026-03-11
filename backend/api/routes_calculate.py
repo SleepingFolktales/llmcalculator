@@ -20,6 +20,7 @@ from models.response_models import (
     SupercomputerRecommendations,
     SupercomputerTierOutput,
     SupercomputerRecommendation,
+    TierRecommendations,
 )
 from utils.data_loader import get_data_loader
 from utils.model_resolver import resolve_model, extract_model_info
@@ -319,21 +320,32 @@ async def calculate_hardware(request: CalculationRequest):
     supercomputer_ideal = supercomputer_tier_to_output(supercomputer_recs["ideal"], "ideal")
     supercomputer_best = supercomputer_tier_to_output(supercomputer_recs["best"], "best")
     
-    supercomputer_hardware = SupercomputerRecommendations(
-        minimum=supercomputer_minimum,
-        ideal=supercomputer_ideal,
-        best=supercomputer_best
+    # Build unified tier recommendations
+    minimum_tier = TierRecommendations(
+        desktop=minimum_output,
+        laptop=laptop_hardware.minimum,
+        supercomputer=supercomputer_minimum
+    )
+    
+    ideal_tier = TierRecommendations(
+        desktop=ideal_output,
+        laptop=laptop_hardware.ideal,
+        supercomputer=supercomputer_ideal
+    )
+    
+    best_tier = TierRecommendations(
+        desktop=best_output,
+        laptop=laptop_hardware.best,
+        supercomputer=supercomputer_best
     )
     
     return CalculationResponse(
         scenario_summary=results["scenario_summary"],
         deployment_mode=request.deployment_mode,
         model_breakdown=model_breakdown,
-        minimum=minimum_output,
-        ideal=ideal_output,
-        best=best_output,
-        laptop_hardware=laptop_hardware,
-        supercomputer_hardware=supercomputer_hardware,
+        minimum=minimum_tier,
+        ideal=ideal_tier,
+        best=best_tier,
         upgrade_path=results["upgrade_path"],
         calculation_notes=calc_notes,
         data_freshness="Hardware data as of March 2026",
