@@ -1,6 +1,7 @@
 import { CalculationResponse } from '../../types/api'
 import TierCard from './TierCard'
 import LaptopHardwarePanel from './LaptopHardwarePanel'
+import SupercomputerPanel from './SupercomputerPanel'
 import { Download } from 'lucide-react'
 
 interface ResultsPanelProps {
@@ -186,6 +187,63 @@ Device: ${results.laptop_hardware.raspberry_pi?.device || 'N/A'}
   - Note: ${results.laptop_hardware.raspberry_pi?.notes || 'N/A'}
 
 ` : ''}` : ''}
+${results.supercomputer_hardware ? `
+================================================================================
+                    SUPERCOMPUTER & AI ACCELERATOR OPTIONS
+================================================================================
+
+${results.supercomputer_hardware?.minimum ? `
+MINIMUM SUPERCOMPUTER CONFIGURATION:
+------------------------------------
+System: ${results.supercomputer_hardware.minimum.system.name}
+  - Brand: ${results.supercomputer_hardware.minimum.system.brand}
+  - Model: ${results.supercomputer_hardware.minimum.system.short_name}
+  - Category: ${results.supercomputer_hardware.minimum.system.category.replace('_', ' ').toUpperCase()}
+  - Form Factor: ${results.supercomputer_hardware.minimum.system.form_factor.replace('_', ' ')}
+  - Total VRAM: ${results.supercomputer_hardware.minimum.system.total_vram_gb >= 1000 ? `${(results.supercomputer_hardware.minimum.system.total_vram_gb / 1024).toFixed(1)} TB` : `${results.supercomputer_hardware.minimum.system.total_vram_gb.toFixed(0)} GB`}
+  - Memory Bandwidth: ${results.supercomputer_hardware.minimum.system.vram_bandwidth_tbps ? `${results.supercomputer_hardware.minimum.system.vram_bandwidth_tbps.toFixed(1)} TB/s` : 'N/A'}
+  - Power: ${results.supercomputer_hardware.minimum.system.power_watts >= 1000 ? `${(results.supercomputer_hardware.minimum.system.power_watts / 1000).toFixed(1)} kW` : `${results.supercomputer_hardware.minimum.system.power_watts} W`}
+  - Price: ${results.supercomputer_hardware.minimum.system.msrp_usd ? `$${results.supercomputer_hardware.minimum.system.msrp_usd.toLocaleString()}` : 'Contact Vendor'}
+  - Backends: ${safeJoin(results.supercomputer_hardware.minimum.system.backends)}
+  - Use Cases: ${safeJoin(results.supercomputer_hardware.minimum.system.use_cases)}
+  - Why: ${results.supercomputer_hardware.minimum.fit_rationale}
+  - Notes: ${results.supercomputer_hardware.minimum.system.notes}
+
+` : ''}${results.supercomputer_hardware?.ideal ? `
+IDEAL SUPERCOMPUTER CONFIGURATION:
+-----------------------------------
+System: ${results.supercomputer_hardware.ideal.system.name}
+  - Brand: ${results.supercomputer_hardware.ideal.system.brand}
+  - Model: ${results.supercomputer_hardware.ideal.system.short_name}
+  - Category: ${results.supercomputer_hardware.ideal.system.category.replace('_', ' ').toUpperCase()}
+  - Form Factor: ${results.supercomputer_hardware.ideal.system.form_factor.replace('_', ' ')}
+  - Total VRAM: ${results.supercomputer_hardware.ideal.system.total_vram_gb >= 1000 ? `${(results.supercomputer_hardware.ideal.system.total_vram_gb / 1024).toFixed(1)} TB` : `${results.supercomputer_hardware.ideal.system.total_vram_gb.toFixed(0)} GB`}
+  - Memory Bandwidth: ${results.supercomputer_hardware.ideal.system.vram_bandwidth_tbps ? `${results.supercomputer_hardware.ideal.system.vram_bandwidth_tbps.toFixed(1)} TB/s` : 'N/A'}
+  - Power: ${results.supercomputer_hardware.ideal.system.power_watts >= 1000 ? `${(results.supercomputer_hardware.ideal.system.power_watts / 1000).toFixed(1)} kW` : `${results.supercomputer_hardware.ideal.system.power_watts} W`}
+  - Price: ${results.supercomputer_hardware.ideal.system.msrp_usd ? `$${results.supercomputer_hardware.ideal.system.msrp_usd.toLocaleString()}` : 'Contact Vendor'}
+  - Backends: ${safeJoin(results.supercomputer_hardware.ideal.system.backends)}
+  - Use Cases: ${safeJoin(results.supercomputer_hardware.ideal.system.use_cases)}
+  - Why: ${results.supercomputer_hardware.ideal.fit_rationale}
+  - Notes: ${results.supercomputer_hardware.ideal.system.notes}
+
+` : ''}${results.supercomputer_hardware?.best ? `
+BEST SUPERCOMPUTER CONFIGURATION:
+----------------------------------
+System: ${results.supercomputer_hardware.best.system.name}
+  - Brand: ${results.supercomputer_hardware.best.system.brand}
+  - Model: ${results.supercomputer_hardware.best.system.short_name}
+  - Category: ${results.supercomputer_hardware.best.system.category.replace('_', ' ').toUpperCase()}
+  - Form Factor: ${results.supercomputer_hardware.best.system.form_factor.replace('_', ' ')}
+  - Total VRAM: ${results.supercomputer_hardware.best.system.total_vram_gb >= 1000 ? `${(results.supercomputer_hardware.best.system.total_vram_gb / 1024).toFixed(1)} TB` : `${results.supercomputer_hardware.best.system.total_vram_gb.toFixed(0)} GB`}
+  - Memory Bandwidth: ${results.supercomputer_hardware.best.system.vram_bandwidth_tbps ? `${results.supercomputer_hardware.best.system.vram_bandwidth_tbps.toFixed(1)} TB/s` : 'N/A'}
+  - Power: ${results.supercomputer_hardware.best.system.power_watts >= 1000 ? `${(results.supercomputer_hardware.best.system.power_watts / 1000).toFixed(1)} kW` : `${results.supercomputer_hardware.best.system.power_watts} W`}
+  - Price: ${results.supercomputer_hardware.best.system.msrp_usd ? `$${results.supercomputer_hardware.best.system.msrp_usd.toLocaleString()}` : 'Contact Vendor'}
+  - Backends: ${safeJoin(results.supercomputer_hardware.best.system.backends)}
+  - Use Cases: ${safeJoin(results.supercomputer_hardware.best.system.use_cases)}
+  - Why: ${results.supercomputer_hardware.best.fit_rationale}
+  - Notes: ${results.supercomputer_hardware.best.system.notes}
+
+` : ''}` : ''}
 ================================================================================
                           CALCULATION NOTES
 ================================================================================
@@ -248,6 +306,11 @@ https://github.com/yourusername/llmcalculator
       {/* Laptop Hardware Recommendations */}
       {results.laptop_hardware && (
         <LaptopHardwarePanel laptopHardware={results.laptop_hardware} />
+      )}
+
+      {/* Supercomputer Recommendations */}
+      {results.supercomputer_hardware && (
+        <SupercomputerPanel recommendations={results.supercomputer_hardware} />
       )}
 
       {/* Upgrade Path */}

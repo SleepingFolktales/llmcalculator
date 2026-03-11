@@ -28,6 +28,7 @@ async def lifespan(app: FastAPI):
     print(f"Loaded {len(loader.get_all_models())} models")
     print(f"Loaded {len(loader.get_all_gpus())} desktop GPUs")
     print(f"Loaded {len(loader.get_all_laptop_gpus())} laptop GPUs")
+    print(f"Loaded {len(loader.get_all_supercomputers())} supercomputers/AI accelerators")
     print(f"Loaded {len(loader.get_all_cpus())} CPUs")
     print(f"Loaded {len(loader.ram_specs)} RAM specs")
     print(f"Loaded {len(loader.get_all_precision_formats())} precision formats")

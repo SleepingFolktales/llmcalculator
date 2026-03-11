@@ -30,10 +30,13 @@ class DataLoader:
         self.cpus: List[Dict] = []
         self.ram_specs: List[Dict] = []
         self.precision_formats: List[Dict] = []
-        self.laptop_gpus: List[Dict] = []
+        self.precision_by_id: Dict[str, Dict] = {}
         
-        self.models_by_id: Dict[str, Dict] = {}
-        self.gpus_by_id: Dict[str, Dict] = {}
+        self.laptop_gpus: List[Dict] = []
+        self.laptop_gpus_by_id: Dict[str, Dict] = {}
+        
+        self.supercomputers: List[Dict] = []
+        self.supercomputers_by_id: Dict[str, Dict] = {}
         self.cpus_by_id: Dict[str, Dict] = {}
         self.precision_by_id: Dict[str, Dict] = {}
         self.laptop_gpus_by_id: Dict[str, Dict] = {}
@@ -49,6 +52,7 @@ class DataLoader:
         self._load_ram()
         self._load_precision_formats()
         self._load_laptop_hardware()
+        self._load_supercomputers()
     
     def _load_models(self):
         """Load HuggingFace models database."""
@@ -110,6 +114,16 @@ class DataLoader:
             for gpu in self.laptop_gpus:
                 self.laptop_gpus_by_id[gpu["id"]] = gpu
     
+    def _load_supercomputers(self):
+        """Load supercomputer/AI accelerator hardware database."""
+        supercomputer_path = DATA_DIR / "supercomputer.json"
+        if supercomputer_path.exists():
+            with open(supercomputer_path, 'r', encoding='utf-8') as f:
+                self.supercomputers = json.load(f)
+            
+            for system in self.supercomputers:
+                self.supercomputers_by_id[system["id"]] = system
+    
     def get_all_models(self) -> List[Dict]:
         """Get all models."""
         return self.models
@@ -145,6 +159,14 @@ class DataLoader:
     def get_all_laptop_gpus(self) -> List[Dict]:
         """Get all laptop GPUs."""
         return self.laptop_gpus
+    
+    def get_all_supercomputers(self) -> List[Dict]:
+        """Get all supercomputers/AI accelerators."""
+        return self.supercomputers
+    
+    def get_supercomputer_by_id(self, supercomputer_id: str) -> Dict:
+        """Get supercomputer by ID."""
+        return self.supercomputers_by_id.get(supercomputer_id)
     
     def get_laptop_gpu_by_id(self, gpu_id: str) -> Optional[Dict]:
         """Get laptop GPU by exact ID match."""

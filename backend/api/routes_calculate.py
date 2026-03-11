@@ -17,6 +17,9 @@ from models.response_models import (
     LaptopTierOutput,
     LaptopGPURecommendation,
     RaspberryPiRecommendation,
+    SupercomputerRecommendations,
+    SupercomputerTierOutput,
+    SupercomputerRecommendation,
 )
 from utils.data_loader import get_data_loader
 from utils.model_resolver import resolve_model, extract_model_info
@@ -24,6 +27,7 @@ from core.scenarios import ModelInstance
 from core.calculator import calculate_hardware_recommendations
 from core.quantization import quant_description
 from core.laptop_scoring import calculate_laptop_recommendations, LaptopGPUSpec
+from core.supercomputer_scoring import calculate_supercomputer_recommendations
 
 router = APIRouter()
 
@@ -264,6 +268,63 @@ async def calculate_hardware(request: CalculationRequest):
         raspberry_pi=raspberry_pi
     )
     
+    # Calculate supercomputer recommendations
+    supercomputer_db = loader.get_all_supercomputers()
+    largest_model = max(model_instances, key=lambda m: m.params_b)
+    
+    supercomputer_recs = calculate_supercomputer_recommendations(
+        vram_needed_gb=vram_needed,
+        params_b=largest_model.params_b,
+        use_case=largest_model.use_case,
+        supercomputer_db=supercomputer_db
+    )
+    
+    # Convert supercomputer recommendations to Pydantic models
+    def supercomputer_tier_to_output(tier_data, tier_name):
+        if tier_data is None:
+            return None
+        
+        system_rec = SupercomputerRecommendation(
+            id=tier_data["id"],
+            name=tier_data["name"],
+            short_name=tier_data["short_name"],
+            brand=tier_data["brand"],
+            category=tier_data["category"],
+            subcategory=tier_data["subcategory"],
+            total_vram_gb=tier_data["total_vram_gb"],
+            vram_bandwidth_tbps=tier_data["vram_bandwidth_tbps"],
+            compute_performance=tier_data["compute_performance"],
+            power_watts=tier_data["power_watts"],
+            form_factor=tier_data["form_factor"],
+            msrp_usd=tier_data["msrp_usd"],
+            use_cases=tier_data["use_cases"],
+            availability=tier_data["availability"],
+            notes=tier_data["notes"],
+            backends=tier_data["backends"]
+        )
+        
+        rationale_map = {
+            "minimum": f"Most affordable option at ${tier_data['msrp_usd']:,}" if tier_data['msrp_usd'] else "Budget-friendly entry point",
+            "ideal": f"Best balance of performance and practicality with {tier_data['total_vram_gb']:.0f}GB VRAM",
+            "best": f"Maximum capability with {tier_data['total_vram_gb']:.0f}GB VRAM for {tier_data['total_vram_gb'] / vram_needed:.1f}x headroom"
+        }
+        
+        return SupercomputerTierOutput(
+            tier_name=tier_name,
+            system=system_rec,
+            fit_rationale=rationale_map.get(tier_name, "Recommended for your scenario")
+        )
+    
+    supercomputer_minimum = supercomputer_tier_to_output(supercomputer_recs["minimum"], "minimum")
+    supercomputer_ideal = supercomputer_tier_to_output(supercomputer_recs["ideal"], "ideal")
+    supercomputer_best = supercomputer_tier_to_output(supercomputer_recs["best"], "best")
+    
+    supercomputer_hardware = SupercomputerRecommendations(
+        minimum=supercomputer_minimum,
+        ideal=supercomputer_ideal,
+        best=supercomputer_best
+    )
+    
     return CalculationResponse(
         scenario_summary=results["scenario_summary"],
         deployment_mode=request.deployment_mode,
@@ -272,6 +333,7 @@ async def calculate_hardware(request: CalculationRequest):
         ideal=ideal_output,
         best=best_output,
         laptop_hardware=laptop_hardware,
+        supercomputer_hardware=supercomputer_hardware,
         upgrade_path=results["upgrade_path"],
         calculation_notes=calc_notes,
         data_freshness="Hardware data as of March 2026",

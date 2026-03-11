@@ -157,6 +157,37 @@ export interface LaptopHardwareRecommendations {
   raspberry_pi: RaspberryPiRecommendation | null
 }
 
+export interface SupercomputerRecommendation {
+  id: string
+  name: string
+  short_name: string
+  brand: string
+  category: string
+  subcategory: string
+  total_vram_gb: number
+  vram_bandwidth_tbps: number | null
+  compute_performance: Record<string, any>
+  power_watts: number
+  form_factor: string
+  msrp_usd: number | null
+  use_cases: string[]
+  availability: string
+  notes: string
+  backends: string[]
+}
+
+export interface SupercomputerTierOutput {
+  tier_name: string
+  system: SupercomputerRecommendation
+  fit_rationale: string
+}
+
+export interface SupercomputerRecommendations {
+  minimum: SupercomputerTierOutput | null
+  ideal: SupercomputerTierOutput | null
+  best: SupercomputerTierOutput | null
+}
+
 export interface CalculationResponse {
   scenario_summary: string
   deployment_mode: string
@@ -164,7 +195,8 @@ export interface CalculationResponse {
   minimum: HardwareTierOutput
   ideal: HardwareTierOutput
   best: HardwareTierOutput
-  laptop_hardware: LaptopHardwareRecommendations | null
+  laptop_hardware: LaptopHardwareRecommendations
+  supercomputer_hardware: SupercomputerRecommendations
   upgrade_path: string[]
   calculation_notes: string[]
   data_freshness: string

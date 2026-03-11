@@ -127,11 +127,48 @@ class RaspberryPiRecommendation(BaseModel):
 
 
 class LaptopHardwareRecommendations(BaseModel):
-    """Complete laptop hardware recommendations."""
+    """Laptop hardware recommendations container."""
     minimum: Optional[LaptopTierOutput]
     ideal: Optional[LaptopTierOutput]
     best: Optional[LaptopTierOutput]
     raspberry_pi: Optional[RaspberryPiRecommendation]
+
+
+class SupercomputerRecommendation(BaseModel):
+    """Supercomputer/AI accelerator system recommendation."""
+    id: str
+    name: str
+    short_name: str
+    brand: str
+    category: str
+    subcategory: str
+    
+    total_vram_gb: float
+    vram_bandwidth_tbps: Optional[float]
+    compute_performance: Dict
+    
+    power_watts: int
+    form_factor: str
+    msrp_usd: Optional[int]
+    
+    use_cases: List[str]
+    availability: str
+    notes: str
+    backends: List[str]
+
+
+class SupercomputerTierOutput(BaseModel):
+    """Supercomputer tier recommendation."""
+    tier_name: str
+    system: SupercomputerRecommendation
+    fit_rationale: str
+
+
+class SupercomputerRecommendations(BaseModel):
+    """Supercomputer recommendations container."""
+    minimum: Optional[SupercomputerTierOutput]
+    ideal: Optional[SupercomputerTierOutput]
+    best: Optional[SupercomputerTierOutput]
 
 
 class CalculationResponse(BaseModel):
@@ -145,7 +182,8 @@ class CalculationResponse(BaseModel):
     ideal: HardwareTierOutput
     best: HardwareTierOutput
     
-    laptop_hardware: Optional[LaptopHardwareRecommendations]
+    laptop_hardware: LaptopHardwareRecommendations
+    supercomputer_hardware: SupercomputerRecommendations
     
     upgrade_path: List[str]
     
