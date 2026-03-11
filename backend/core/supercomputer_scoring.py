@@ -175,33 +175,46 @@ def calculate_supercomputer_recommendations(
             backends=system.get("backends", [])
         )
         
-        # Scoring
+        # Scoring with stronger differentiation
         score = 0
         
-        # Price efficiency (lower is better)
+        # Price efficiency (lower is better) - increased weight
         if spec.msrp_usd:
             price_per_gb_vram = spec.msrp_usd / spec.total_vram_gb if spec.total_vram_gb > 0 else 999999
-            score += (1000000 / price_per_gb_vram) * 10
+            # Higher weight to differentiate better
+            score += (1000000 / price_per_gb_vram) * 20
         
-        # Form factor preference (desktop > workstation > rack)
-        form_factor_scores = {
-            "desktop_sff": 100,
-            "tower_workstation": 80,
-            "rack_server": 40,
-            "rack_scale": 20
-        }
-        score += form_factor_scores.get(spec.form_factor, 30)
-        
-        # Use case match
-        if "inference" in spec.use_cases:
-            score += 30
-        if "training" in spec.use_cases and params_b > 70:
-            score += 20
-        
-        # Power efficiency
-        if spec.power_watts < 500:
+        # VRAM capacity bonus - reward higher VRAM
+        if spec.total_vram_gb >= 1000:  # 1TB+
+            score += 200
+        elif spec.total_vram_gb >= 500:
+            score += 150
+        elif spec.total_vram_gb >= 300:
+            score += 100
+        elif spec.total_vram_gb >= 100:
             score += 50
+        
+        # Form factor preference (desktop > workstation > rack) - increased weights
+        form_factor_scores = {
+            "desktop_sff": 150,
+            "tower_workstation": 100,
+            "rack_server": 50,
+            "rack_scale": 25
+        }
+        score += form_factor_scores.get(spec.form_factor, 40)
+        
+        # Use case match - increased weight
+        if "inference" in spec.use_cases:
+            score += 60
+        if "training" in spec.use_cases and params_b > 70:
+            score += 40
+        
+        # Power efficiency - increased weight
+        if spec.power_watts < 500:
+            score += 100
         elif spec.power_watts < 2000:
+            score += 60
+        elif spec.power_watts < 5000:
             score += 30
         
         scored_systems.append((score, spec))

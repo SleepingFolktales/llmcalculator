@@ -812,6 +812,173 @@
   },
 
   {
+    "id": "intel-gaudi2",
+    "name": "Intel Gaudi 2",
+    "short_name": "Gaudi 2",
+    "brand": "Intel",
+    "category": "ai_accelerator",
+    "subcategory": "ethernet_ai_asic",
+    "architecture": "Gaudi 2",
+    "generation": "2nd Gen Gaudi",
+    "process_node": "TSMC 7nm",
+    "design_type": "Custom ASIC with integrated Ethernet",
+
+    "vram_gb": 96,
+    "vram_type": "HBM2e",
+    "vram_bandwidth_tbps": 2.45,
+
+    "compute_performance": {
+      "bf16_tflops": 432,
+      "fp32_tflops": 54,
+      "tf32_tflops": 432
+    },
+
+    "interconnect": {
+      "type": "24x 100GbE RoCE",
+      "total_bandwidth_gbps": 2400,
+      "notes": "Integrated Ethernet networking eliminates need for InfiniBand"
+    },
+
+    "tdp_watts": 600,
+    "form_factor": "OAM module / PCIe card",
+    "msrp_usd": 8125,
+
+    "software": {
+      "sdk": "Intel Gaudi Software Suite",
+      "frameworks": ["PyTorch", "TensorFlow", "DeepSpeed"],
+      "notes": "Open software stack, no proprietary SDK lock-in"
+    },
+
+    "llm_capability": {
+      "use_cases": ["training", "inference"],
+      "notes": "Designed for cost-effective large model training"
+    },
+
+    "backends": ["Habana", "PyTorch", "TensorFlow"],
+    "release_date": "2022-05-01",
+    "notes": "8-chip baseboard costs $65,000. Designed to compete with NVIDIA at lower price point. Integrated Ethernet reduces infrastructure costs."
+  },
+
+  {
+    "id": "intel-gaudi3",
+    "name": "Intel Gaudi 3",
+    "short_name": "Gaudi 3",
+    "brand": "Intel",
+    "category": "ai_accelerator",
+    "subcategory": "ethernet_ai_asic",
+    "architecture": "Gaudi 3",
+    "generation": "3rd Gen Gaudi",
+    "process_node": "TSMC 5nm",
+    "design_type": "Custom ASIC with dual compute dies",
+
+    "vram_gb": 128,
+    "vram_type": "HBM2e",
+    "vram_bandwidth_tbps": 3.7,
+    "on_chip_sram_mb": 96,
+
+    "compute_performance": {
+      "fp8_tflops": 1835,
+      "bf16_tflops": 917,
+      "fp32_tflops": 114
+    },
+
+    "interconnect": {
+      "type": "24x 200GbE RoCE",
+      "total_bandwidth_gbps": 4800,
+      "notes": "Doubled Ethernet bandwidth vs Gaudi 2"
+    },
+
+    "tdp_watts": 900,
+    "form_factor": "OAM module / PCIe card",
+    "msrp_usd": 15650,
+
+    "software": {
+      "sdk": "Intel Gaudi Software Suite",
+      "frameworks": ["PyTorch", "vLLM", "Hugging Face", "DeepSpeed"],
+      "notes": "Native PyTorch integration, vLLM support for inference"
+    },
+
+    "system_configs": {
+      "8_chip_baseboard": {
+        "chips": 8,
+        "total_hbm_tb": 1.0,
+        "price_usd": 125000,
+        "notes": "8-chip system targets H100 replacement at half the cost"
+      }
+    },
+
+    "llm_capability": {
+      "use_cases": ["training", "inference"],
+      "notes": "Claims 1.5x faster training vs H100 on Llama 2 70B, up to 50% cost savings"
+    },
+
+    "backends": ["Habana", "PyTorch", "vLLM"],
+    "release_date": "2024-04-09",
+    "notes": "Intel's answer to NVIDIA H100. $15,650 per chip vs $30,000 for H100. 2x performance vs Gaudi 2. Integrated 200GbE eliminates InfiniBand costs."
+  },
+
+  {
+    "id": "amd-mi300x",
+    "name": "AMD Instinct MI300X",
+    "short_name": "MI300X",
+    "brand": "AMD",
+    "category": "ai_accelerator",
+    "subcategory": "datacenter_gpu",
+    "architecture": "CDNA 3",
+    "generation": "MI300 Series",
+    "process_node": "TSMC 5nm + 6nm (chiplet)",
+    "packaging": "3D chiplet with 8 HBM3 stacks",
+    "design_type": "GPU accelerator with 304 compute units",
+
+    "vram_gb": 192,
+    "vram_type": "HBM3",
+    "vram_bandwidth_tbps": 5.3,
+
+    "compute_performance": {
+      "fp8_tflops": 2610,
+      "fp16_tflops": 1307,
+      "fp32_tflops": 163,
+      "fp64_tflops": 81.7,
+      "int8_tops": 5220
+    },
+
+    "interconnect": {
+      "type": "Infinity Fabric Link",
+      "bandwidth_per_link_gbps": 128,
+      "notes": "Direct GPU-to-GPU communication"
+    },
+
+    "tdp_watts": 750,
+    "form_factor": "OAM module",
+    "msrp_usd": 20000,
+
+    "software": {
+      "sdk": "ROCm (Radeon Open Compute)",
+      "frameworks": ["PyTorch", "TensorFlow", "vLLM", "Hugging Face"],
+      "notes": "Open-source ROCm stack, PyTorch and vLLM well-supported"
+    },
+
+    "system_configs": {
+      "8_gpu_platform": {
+        "gpus": 8,
+        "total_vram_tb": 1.536,
+        "total_hbm_bandwidth_tbps": 42.4,
+        "notes": "8-GPU UBB (Universal Baseboard) configuration"
+      }
+    },
+
+    "llm_capability": {
+      "use_cases": ["training", "inference"],
+      "max_context_length": "Up to 1M+ tokens with 192GB VRAM",
+      "notes": "Largest memory per GPU in market. Excellent for large context windows and MoE models."
+    },
+
+    "backends": ["ROCm", "PyTorch", "vLLM"],
+    "release_date": "2023-12-06",
+    "notes": "AMD's flagship AI accelerator. 192GB HBM3 largest in class. Strong alternative to H100 with better memory capacity. ROCm ecosystem maturing rapidly. Price competitive at ~$20K vs $30K+ for H100."
+  },
+
+  {
     "id": "aws-trainium3-chip",
     "name": "AWS Trainium3",
     "short_name": "Trainium3",
