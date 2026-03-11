@@ -116,18 +116,56 @@ export interface ScenarioBreakdown {
   moe_note?: string
 }
 
+export interface LaptopGPURecommendation {
+  name: string
+  short_name: string
+  brand: string
+  form_factor: string
+  vram_gb: number | null
+  unified_memory_max_gb: number | null
+  effective_vram_gb: number
+  bandwidth_gbps: number
+  typical_laptop_price_usd: number | null
+  backends: string[]
+  typical_laptop_brands: string[]
+  is_unified_memory: boolean
+  notes: string
+}
+
+export interface LaptopTierOutput {
+  tier_name: string
+  laptop_gpu: LaptopGPURecommendation
+  estimated_tps: number
+  notes: string
+}
+
+export interface RaspberryPiRecommendation {
+  device: string
+  form_factor: string
+  ram_gb: number
+  cpu: string
+  estimated_tps: number
+  notes: string
+  typical_price_usd: number
+  power_consumption_watts: number
+}
+
+export interface LaptopHardwareRecommendations {
+  minimum: LaptopTierOutput | null
+  ideal: LaptopTierOutput | null
+  best: LaptopTierOutput | null
+  raspberry_pi: RaspberryPiRecommendation | null
+}
+
 export interface CalculationResponse {
   scenario_summary: string
   deployment_mode: string
-  
   model_breakdown: ScenarioBreakdown[]
-  
   minimum: HardwareTierOutput
   ideal: HardwareTierOutput
   best: HardwareTierOutput
-  
+  laptop_hardware: LaptopHardwareRecommendations | null
   upgrade_path: string[]
-  
   calculation_notes: string[]
   data_freshness: string
 }

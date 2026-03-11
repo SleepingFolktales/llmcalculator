@@ -1,5 +1,6 @@
 import { CalculationResponse } from '../../types/api'
 import TierCard from './TierCard'
+import LaptopHardwarePanel from './LaptopHardwarePanel'
 import { Download } from 'lucide-react'
 
 interface ResultsPanelProps {
@@ -117,6 +118,62 @@ ${generateTierSection(results.best, 'Best')}
 ================================================================================
 ${results.upgrade_path.length > 0 ? results.upgrade_path.map((path, index) => `${index + 1}. ${path}`).join('\n') : 'No upgrade path suggested for this configuration.'}
 
+${results.laptop_hardware ? `
+================================================================================
+                    LAPTOP & PORTABLE HARDWARE OPTIONS
+================================================================================
+
+${results.laptop_hardware.minimum ? `
+MINIMUM LAPTOP CONFIGURATION:
+-----------------------------
+GPU: ${results.laptop_hardware.minimum.laptop_gpu.short_name}
+  - Brand: ${results.laptop_hardware.minimum.laptop_gpu.brand}
+  - Form Factor: ${results.laptop_hardware.minimum.laptop_gpu.form_factor}
+  - VRAM: ${results.laptop_hardware.minimum.laptop_gpu.vram_gb ? `${results.laptop_hardware.minimum.laptop_gpu.vram_gb} GB` : `${results.laptop_hardware.minimum.laptop_gpu.unified_memory_max_gb} GB Unified Memory`}
+  - Bandwidth: ${results.laptop_hardware.minimum.laptop_gpu.bandwidth_gbps.toFixed(1)} GB/s
+  - Estimated Speed: ${results.laptop_hardware.minimum.estimated_tps.toFixed(1)} tok/s
+  - Price: ${results.laptop_hardware.minimum.laptop_gpu.typical_laptop_price_usd ? `$${results.laptop_hardware.minimum.laptop_gpu.typical_laptop_price_usd}` : 'N/A'}
+  - Found in: ${results.laptop_hardware.minimum.laptop_gpu.typical_laptop_brands.slice(0, 3).join(', ')}
+  - Backends: ${results.laptop_hardware.minimum.laptop_gpu.backends.join(', ')}
+
+` : ''}${results.laptop_hardware.ideal ? `
+IDEAL LAPTOP CONFIGURATION:
+---------------------------
+GPU: ${results.laptop_hardware.ideal.laptop_gpu.short_name}
+  - Brand: ${results.laptop_hardware.ideal.laptop_gpu.brand}
+  - Form Factor: ${results.laptop_hardware.ideal.laptop_gpu.form_factor}
+  - VRAM: ${results.laptop_hardware.ideal.laptop_gpu.vram_gb ? `${results.laptop_hardware.ideal.laptop_gpu.vram_gb} GB` : `${results.laptop_hardware.ideal.laptop_gpu.unified_memory_max_gb} GB Unified Memory`}
+  - Bandwidth: ${results.laptop_hardware.ideal.laptop_gpu.bandwidth_gbps.toFixed(1)} GB/s
+  - Estimated Speed: ${results.laptop_hardware.ideal.estimated_tps.toFixed(1)} tok/s
+  - Price: ${results.laptop_hardware.ideal.laptop_gpu.typical_laptop_price_usd ? `$${results.laptop_hardware.ideal.laptop_gpu.typical_laptop_price_usd}` : 'N/A'}
+  - Found in: ${results.laptop_hardware.ideal.laptop_gpu.typical_laptop_brands.slice(0, 3).join(', ')}
+  - Backends: ${results.laptop_hardware.ideal.laptop_gpu.backends.join(', ')}
+
+` : ''}${results.laptop_hardware.best ? `
+BEST LAPTOP CONFIGURATION:
+--------------------------
+GPU: ${results.laptop_hardware.best.laptop_gpu.short_name}
+  - Brand: ${results.laptop_hardware.best.laptop_gpu.brand}
+  - Form Factor: ${results.laptop_hardware.best.laptop_gpu.form_factor}
+  - VRAM: ${results.laptop_hardware.best.laptop_gpu.vram_gb ? `${results.laptop_hardware.best.laptop_gpu.vram_gb} GB` : `${results.laptop_hardware.best.laptop_gpu.unified_memory_max_gb} GB Unified Memory`}
+  - Bandwidth: ${results.laptop_hardware.best.laptop_gpu.bandwidth_gbps.toFixed(1)} GB/s
+  - Estimated Speed: ${results.laptop_hardware.best.estimated_tps.toFixed(1)} tok/s
+  - Price: ${results.laptop_hardware.best.laptop_gpu.typical_laptop_price_usd ? `$${results.laptop_hardware.best.laptop_gpu.typical_laptop_price_usd}` : 'N/A'}
+  - Found in: ${results.laptop_hardware.best.laptop_gpu.typical_laptop_brands.slice(0, 3).join(', ')}
+  - Backends: ${results.laptop_hardware.best.laptop_gpu.backends.join(', ')}
+
+` : ''}${results.laptop_hardware.raspberry_pi ? `
+RASPBERRY PI OPTION (Edge Computing):
+--------------------------------------
+Device: ${results.laptop_hardware.raspberry_pi.device}
+  - CPU: ${results.laptop_hardware.raspberry_pi.cpu}
+  - RAM: ${results.laptop_hardware.raspberry_pi.ram_gb} GB
+  - Power: ${results.laptop_hardware.raspberry_pi.power_consumption_watts}W
+  - Estimated Speed: ~${results.laptop_hardware.raspberry_pi.estimated_tps.toFixed(1)} tok/s (CPU-only)
+  - Price: $${results.laptop_hardware.raspberry_pi.typical_price_usd}
+  - Note: ${results.laptop_hardware.raspberry_pi.notes}
+
+` : ''}` : ''}
 ================================================================================
                           CALCULATION NOTES
 ================================================================================
@@ -171,6 +228,11 @@ https://github.com/yourusername/llmcalculator
         <TierCard tier={results.ideal} />
         <TierCard tier={results.best} />
       </div>
+
+      {/* Laptop Hardware Recommendations */}
+      {results.laptop_hardware && (
+        <LaptopHardwarePanel laptopHardware={results.laptop_hardware} />
+      )}
 
       {/* Upgrade Path */}
       {results.upgrade_path.length > 0 && (

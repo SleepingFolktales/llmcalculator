@@ -89,6 +89,51 @@ class ScenarioBreakdown(BaseModel):
     moe_note: Optional[str]
 
 
+class LaptopGPURecommendation(BaseModel):
+    """Laptop GPU/SoC hardware recommendation."""
+    name: str
+    short_name: str
+    brand: str
+    form_factor: str
+    vram_gb: Optional[float]
+    unified_memory_max_gb: Optional[float]
+    effective_vram_gb: float
+    bandwidth_gbps: float
+    typical_laptop_price_usd: Optional[int]
+    backends: List[str]
+    typical_laptop_brands: List[str]
+    is_unified_memory: bool
+    notes: str
+
+
+class LaptopTierOutput(BaseModel):
+    """Laptop hardware tier recommendation."""
+    tier_name: str
+    laptop_gpu: LaptopGPURecommendation
+    estimated_tps: float
+    notes: str
+
+
+class RaspberryPiRecommendation(BaseModel):
+    """Raspberry Pi SBC recommendation."""
+    device: str
+    form_factor: str
+    ram_gb: int
+    cpu: str
+    estimated_tps: float
+    notes: str
+    typical_price_usd: int
+    power_consumption_watts: int
+
+
+class LaptopHardwareRecommendations(BaseModel):
+    """Complete laptop hardware recommendations."""
+    minimum: Optional[LaptopTierOutput]
+    ideal: Optional[LaptopTierOutput]
+    best: Optional[LaptopTierOutput]
+    raspberry_pi: Optional[RaspberryPiRecommendation]
+
+
 class CalculationResponse(BaseModel):
     """Complete calculation response."""
     scenario_summary: str
@@ -99,6 +144,8 @@ class CalculationResponse(BaseModel):
     minimum: HardwareTierOutput
     ideal: HardwareTierOutput
     best: HardwareTierOutput
+    
+    laptop_hardware: Optional[LaptopHardwareRecommendations]
     
     upgrade_path: List[str]
     

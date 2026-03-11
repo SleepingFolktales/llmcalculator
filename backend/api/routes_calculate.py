@@ -13,12 +13,17 @@ from models.response_models import (
     CPURecommendation,
     PerformanceEstimate,
     PowerEstimate,
+    LaptopHardwareRecommendations,
+    LaptopTierOutput,
+    LaptopGPURecommendation,
+    RaspberryPiRecommendation,
 )
 from utils.data_loader import get_data_loader
 from utils.model_resolver import resolve_model, extract_model_info
 from core.scenarios import ModelInstance
 from core.calculator import calculate_hardware_recommendations
 from core.quantization import quant_description
+from core.laptop_scoring import calculate_laptop_recommendations, LaptopGPUSpec
 
 router = APIRouter()
 
@@ -197,6 +202,68 @@ async def calculate_hardware(request: CalculationRequest):
         "Multi-GPU configurations require NVLink or similar for optimal performance",
     ]
     
+    # Calculate laptop hardware recommendations
+    laptop_gpus_db = loader.get_all_laptop_gpus()
+    vram_needed = results["minimum"].vram_needed_gb
+    max_context = max(inst.context_tokens for inst in model_instances)
+    
+    laptop_recs = calculate_laptop_recommendations(vram_needed, max_context, laptop_gpus_db)
+    
+    # Convert laptop recommendations to Pydantic models
+    def laptop_tier_to_output(tier_data):
+        if tier_data is None:
+            return None
+        
+        gpu_spec = tier_data["laptop_gpu"]
+        gpu_rec = LaptopGPURecommendation(
+            name=gpu_spec.name,
+            short_name=gpu_spec.short_name,
+            brand=gpu_spec.brand,
+            form_factor=gpu_spec.form_factor,
+            vram_gb=gpu_spec.vram_gb,
+            unified_memory_max_gb=gpu_spec.unified_memory_max_gb,
+            effective_vram_gb=tier_data["effective_vram_gb"],
+            bandwidth_gbps=tier_data["bandwidth_gbps"],
+            typical_laptop_price_usd=gpu_spec.typical_laptop_price_usd,
+            backends=gpu_spec.backends,
+            typical_laptop_brands=tier_data["typical_laptop_brands"],
+            is_unified_memory=tier_data["is_unified_memory"],
+            notes=gpu_spec.notes
+        )
+        
+        return LaptopTierOutput(
+            tier_name=tier_data["tier_name"],
+            laptop_gpu=gpu_rec,
+            estimated_tps=tier_data["estimated_tps"],
+            notes=f"Effective VRAM: {tier_data['effective_vram_gb']:.1f}GB, Bandwidth: {tier_data['bandwidth_gbps']:.1f} GB/s"
+        )
+    
+    laptop_minimum = laptop_tier_to_output(laptop_recs["minimum"])
+    laptop_ideal = laptop_tier_to_output(laptop_recs["ideal"])
+    laptop_best = laptop_tier_to_output(laptop_recs["best"])
+    
+    # Raspberry Pi recommendation
+    raspberry_pi = None
+    if laptop_recs["raspberry_pi"]:
+        pi_data = laptop_recs["raspberry_pi"]
+        raspberry_pi = RaspberryPiRecommendation(
+            device=pi_data["device"],
+            form_factor=pi_data["form_factor"],
+            ram_gb=pi_data["ram_gb"],
+            cpu=pi_data["cpu"],
+            estimated_tps=pi_data["estimated_tps"],
+            notes=pi_data["notes"],
+            typical_price_usd=pi_data["typical_price_usd"],
+            power_consumption_watts=pi_data["power_consumption_watts"]
+        )
+    
+    laptop_hardware = LaptopHardwareRecommendations(
+        minimum=laptop_minimum,
+        ideal=laptop_ideal,
+        best=laptop_best,
+        raspberry_pi=raspberry_pi
+    )
+    
     return CalculationResponse(
         scenario_summary=results["scenario_summary"],
         deployment_mode=request.deployment_mode,
@@ -204,6 +271,7 @@ async def calculate_hardware(request: CalculationRequest):
         minimum=minimum_output,
         ideal=ideal_output,
         best=best_output,
+        laptop_hardware=laptop_hardware,
         upgrade_path=results["upgrade_path"],
         calculation_notes=calc_notes,
         data_freshness="Hardware data as of March 2026",

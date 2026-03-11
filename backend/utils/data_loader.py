@@ -30,11 +30,13 @@ class DataLoader:
         self.cpus: List[Dict] = []
         self.ram_specs: List[Dict] = []
         self.precision_formats: List[Dict] = []
+        self.laptop_gpus: List[Dict] = []
         
         self.models_by_id: Dict[str, Dict] = {}
         self.gpus_by_id: Dict[str, Dict] = {}
         self.cpus_by_id: Dict[str, Dict] = {}
         self.precision_by_id: Dict[str, Dict] = {}
+        self.laptop_gpus_by_id: Dict[str, Dict] = {}
         
         self._load_all()
         self._initialized = True
@@ -46,6 +48,7 @@ class DataLoader:
         self._load_cpus()
         self._load_ram()
         self._load_precision_formats()
+        self._load_laptop_hardware()
     
     def _load_models(self):
         """Load HuggingFace models database."""
@@ -96,6 +99,17 @@ class DataLoader:
             for precision in self.precision_formats:
                 self.precision_by_id[precision["id"]] = precision
     
+    def _load_laptop_hardware(self):
+        """Load laptop GPU/SoC hardware database."""
+        laptop_path = DATA_DIR / "laptop_hardware.json"
+        if laptop_path.exists():
+            with open(laptop_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                self.laptop_gpus = data.get("gpus", [])
+            
+            for gpu in self.laptop_gpus:
+                self.laptop_gpus_by_id[gpu["id"]] = gpu
+    
     def get_all_models(self) -> List[Dict]:
         """Get all models."""
         return self.models
@@ -127,6 +141,14 @@ class DataLoader:
     def get_precision_by_id(self, precision_id: str) -> Optional[Dict]:
         """Get precision format by exact ID match."""
         return self.precision_by_id.get(precision_id)
+    
+    def get_all_laptop_gpus(self) -> List[Dict]:
+        """Get all laptop GPUs."""
+        return self.laptop_gpus
+    
+    def get_laptop_gpu_by_id(self, gpu_id: str) -> Optional[Dict]:
+        """Get laptop GPU by exact ID match."""
+        return self.laptop_gpus_by_id.get(gpu_id)
     
     def search_models(self, query: str, limit: int = 20) -> List[Dict]:
         """Fuzzy search for models."""

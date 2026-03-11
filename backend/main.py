@@ -26,7 +26,8 @@ async def lifespan(app: FastAPI):
     print("Loading data files...")
     loader = get_data_loader()
     print(f"Loaded {len(loader.get_all_models())} models")
-    print(f"Loaded {len(loader.get_all_gpus())} GPUs")
+    print(f"Loaded {len(loader.get_all_gpus())} desktop GPUs")
+    print(f"Loaded {len(loader.get_all_laptop_gpus())} laptop GPUs")
     print(f"Loaded {len(loader.get_all_cpus())} CPUs")
     print(f"Loaded {len(loader.ram_specs)} RAM specs")
     print(f"Loaded {len(loader.get_all_precision_formats())} precision formats")
@@ -73,7 +74,8 @@ async def health_check():
     return {
         "status": "healthy",
         "models_loaded": len(loader.get_all_models()),
-        "gpus_loaded": len(loader.get_all_gpus()),
+        "desktop_gpus_loaded": len(loader.get_all_gpus()),
+        "laptop_gpus_loaded": len(loader.get_all_laptop_gpus()),
         "cpus_loaded": len(loader.get_all_cpus()),
         "precision_formats_loaded": len(loader.get_all_precision_formats()),
     }
