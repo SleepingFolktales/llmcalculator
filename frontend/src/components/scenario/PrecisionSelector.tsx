@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { getPrecisionFormats } from '../../api/client'
 import type { PrecisionFormat } from '../../types/api'
-import { Info } from 'lucide-react'
+import { Info, ChevronDown } from 'lucide-react'
+import PrecisionSelectorModal from './PrecisionSelectorModal'
 
 interface PrecisionSelectorProps {
   value: string
@@ -13,6 +14,7 @@ export default function PrecisionSelector({ value, onChange, instanceIndex }: Pr
   const [formats, setFormats] = useState<PrecisionFormat[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [selectedFormat, setSelectedFormat] = useState<PrecisionFormat | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
     const loadFormats = async () => {
@@ -30,32 +32,16 @@ export default function PrecisionSelector({ value, onChange, instanceIndex }: Pr
     loadFormats()
   }, [value])
 
-  const handleChange = (precisionId: string) => {
+  const handleSelectFormat = (precisionId: string) => {
     onChange(precisionId)
     const selected = formats.find(f => f.id === precisionId)
     if (selected) setSelectedFormat(selected)
   }
 
-  // Group formats by category
-  const groupedFormats = formats.reduce((acc, format) => {
-    const category = format.category
-    if (!acc[category]) acc[category] = []
-    acc[category].push(format)
-    return acc
-  }, {} as Record<string, PrecisionFormat[]>)
-
-  const categoryLabels: Record<string, string> = {
-    full_precision: '🔵 Full Precision (FP32/FP16/BF16)',
-    compressed: '🟡 Compressed (FP8/INT8)',
-    highly_compressed: '🟠 Highly Compressed (4-bit)',
-    gguf: '🔴 GGUF (CPU Optimized)',
-    extreme: '⚡ Extreme (BitNet)'
-  }
-
   return (
     <div className="mb-3">
       <div className="flex items-center gap-2 mb-2">
-        <label htmlFor={`precision-${instanceIndex}`} className="block text-sm font-medium text-gray-300">
+        <label className="block text-sm font-medium text-gray-300">
           Precision Format
         </label>
         {selectedFormat && (
@@ -81,32 +67,30 @@ export default function PrecisionSelector({ value, onChange, instanceIndex }: Pr
       </div>
 
       {isLoading ? (
-        <div className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-gray-500">
+        <div className="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-gray-500">
           Loading precision formats...
         </div>
       ) : (
-        <select
-          id={`precision-${instanceIndex}`}
-          value={value}
-          onChange={(e) => handleChange(e.target.value)}
-          className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500"
-          aria-label="Precision format"
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white hover:border-blue-500 hover:bg-gray-700 transition-all flex items-center justify-between group"
         >
-          {Object.entries(groupedFormats).map(([category, categoryFormats]) => (
-            <optgroup key={category} label={categoryLabels[category] || category}>
-              {categoryFormats.map((format) => (
-                <option key={format.id} value={format.id}>
-                  {format.short_name} - {format.bits}bit ({format.memory_reduction_pct}% reduction)
-                  {format.popular ? ' ⭐' : ''}
-                </option>
-              ))}
-            </optgroup>
-          ))}
-        </select>
+          <div className="text-left">
+            {selectedFormat ? (
+              <div>
+                <div className="font-medium">{selectedFormat.short_name}</div>
+                <div className="text-xs text-gray-400">{selectedFormat.name}</div>
+              </div>
+            ) : (
+              <div className="text-gray-400">Select a precision format...</div>
+            )}
+          </div>
+          <ChevronDown className="w-5 h-5 text-gray-500 group-hover:text-blue-400 transition-colors" />
+        </button>
       )}
 
       {selectedFormat && (
-        <div className="mt-2 flex items-center gap-2 text-xs">
+        <div className="mt-2 flex items-center gap-2 text-xs flex-wrap">
           <span className="px-2 py-0.5 bg-blue-900/30 text-blue-400 rounded">
             {selectedFormat.bytes_per_param}× bytes/param
           </span>
@@ -120,6 +104,13 @@ export default function PrecisionSelector({ value, onChange, instanceIndex }: Pr
           )}
         </div>
       )}
+
+      <PrecisionSelectorModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSelect={handleSelectFormat}
+        currentValue={value}
+      />
     </div>
   )
 }
