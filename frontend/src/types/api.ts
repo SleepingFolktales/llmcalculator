@@ -53,7 +53,7 @@ export interface GPURecommendation {
 
 export interface CPURecommendation {
   name: string
-  cores: number
+  cores_total: number
   memory_bandwidth_gbps: number
   tdp_watts: number
   msrp_usd?: number

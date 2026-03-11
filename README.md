@@ -2,7 +2,7 @@
 
 Hardware recommendation tool for running Large Language Models. Get detailed hardware recommendations (Minimum, Ideal, Best) for any LLM deployment scenario. Inspired by Alex Jones's [llmfit](https://github.com/AlexsJones/llmfit), credits to Alex Jones for the data on hugging face models!
 
-## 🚀 Quick Start
+## Manual Start (All Platforms)
 
 ### Prerequisites
 - **Python 3.13+** with `uv` package manager ([Install uv](https://docs.astral.sh/uv/getting-started/installation/))

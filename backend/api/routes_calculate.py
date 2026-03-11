@@ -204,7 +204,7 @@ async def calculate_hardware(request: CalculationRequest):
     
     # Calculate laptop hardware recommendations
     laptop_gpus_db = loader.get_all_laptop_gpus()
-    vram_needed = results["minimum"].vram_needed_gb
+    vram_needed = results["minimum"].vram_total_gb
     max_context = max(inst.context_tokens for inst in model_instances)
     
     laptop_recs = calculate_laptop_recommendations(vram_needed, max_context, laptop_gpus_db)

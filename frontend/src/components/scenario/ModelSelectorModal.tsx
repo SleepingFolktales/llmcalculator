@@ -16,25 +16,33 @@ export default function ModelSelectorModal({ isOpen, onClose, onSelect, currentV
   const [models, setModels] = useState<Model[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
-  // Reset search when modal opens
+  // Load initial models when modal opens
   useEffect(() => {
     if (isOpen) {
       setSearchQuery('')
-      setModels([])
+      // Load initial models on open
+      const loadInitialModels = async () => {
+        setIsLoading(true)
+        try {
+          const results = await searchModels('', 1000)
+          setModels(results)
+        } catch (error) {
+          console.error('Failed to load models:', error)
+          setModels([])
+        } finally {
+          setIsLoading(false)
+        }
+      }
+      loadInitialModels()
     }
   }, [isOpen])
 
   // Search models when query changes
   useEffect(() => {
     const performSearch = async () => {
-      if (searchQuery.length < 2) {
-        setModels([])
-        return
-      }
-
       setIsLoading(true)
       try {
-        const results = await searchModels(searchQuery, 50)
+        const results = await searchModels(searchQuery, 1000)
         setModels(results)
       } catch (error) {
         console.error('Failed to search models:', error)
@@ -108,7 +116,7 @@ export default function ModelSelectorModal({ isOpen, onClose, onSelect, currentV
           ) : models.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <div className="text-gray-500 mb-2">
-                {searchQuery.length < 2 ? 'Type 2+ characters to search' : 'No models found'}
+                No models found
               </div>
               <div className="text-sm text-gray-600">
                 Try: llama, qwen, mistral, phi, gemma, deepseek

@@ -9,8 +9,9 @@ interface ResultsPanelProps {
 
 export default function ResultsPanel({ results }: ResultsPanelProps) {
   const handleDownload = () => {
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
-    const filename = `llm-calculator-results-${timestamp}.txt`
+    try {
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
+      const filename = `llm-calculator-results-${timestamp}.txt`
 
     const formatMoney = (amount?: number) => {
       if (amount === undefined || amount === null) return 'N/A'
@@ -18,6 +19,17 @@ export default function ResultsPanel({ results }: ResultsPanelProps) {
     }
 
     const formatNumber = (num: number) => num.toLocaleString()
+
+    // Safe access helpers for laptop hardware
+    const safeJoin = (arr: string[] | undefined | null, separator = ', ') => {
+      if (!arr || !Array.isArray(arr)) return 'N/A'
+      return arr.slice(0, 3).join(separator)
+    }
+
+    const safeFixed = (num: number | undefined | null, digits = 1) => {
+      if (num === undefined || num === null || isNaN(num)) return 'N/A'
+      return num.toFixed(digits)
+    }
 
     const generateTierSection = (tier: CalculationResponse['minimum'], tierName: string) => {
       const gpu = tier.gpu
@@ -41,7 +53,7 @@ ${gpu ? `  - TDP: ${gpu.tdp_watts} W` : ''}
 ${gpu ? `  - Form Factor: ${gpu.form_factor}` : ''}
 
 CPU: ${cpu ? cpu.name : 'None'}
-${cpu ? `  - Cores: ${formatNumber(cpu.cores)}` : ''}
+${cpu ? `  - Cores: ${formatNumber(cpu.cores_total)}` : ''}
 ${cpu ? `  - Memory Bandwidth: ${cpu.memory_bandwidth_gbps} Gbps` : ''}
 ${cpu ? `  - TDP: ${cpu.tdp_watts} W` : ''}
 ${cpu ? `  - Max RAM: ${formatNumber(cpu.max_ram_gb)} GB` : ''}
@@ -123,55 +135,55 @@ ${results.laptop_hardware ? `
                     LAPTOP & PORTABLE HARDWARE OPTIONS
 ================================================================================
 
-${results.laptop_hardware.minimum ? `
+${results.laptop_hardware?.minimum ? `
 MINIMUM LAPTOP CONFIGURATION:
 -----------------------------
-GPU: ${results.laptop_hardware.minimum.laptop_gpu.short_name}
-  - Brand: ${results.laptop_hardware.minimum.laptop_gpu.brand}
-  - Form Factor: ${results.laptop_hardware.minimum.laptop_gpu.form_factor}
-  - VRAM: ${results.laptop_hardware.minimum.laptop_gpu.vram_gb ? `${results.laptop_hardware.minimum.laptop_gpu.vram_gb} GB` : `${results.laptop_hardware.minimum.laptop_gpu.unified_memory_max_gb} GB Unified Memory`}
-  - Bandwidth: ${results.laptop_hardware.minimum.laptop_gpu.bandwidth_gbps.toFixed(1)} GB/s
-  - Estimated Speed: ${results.laptop_hardware.minimum.estimated_tps.toFixed(1)} tok/s
-  - Price: ${results.laptop_hardware.minimum.laptop_gpu.typical_laptop_price_usd ? `$${results.laptop_hardware.minimum.laptop_gpu.typical_laptop_price_usd}` : 'N/A'}
-  - Found in: ${results.laptop_hardware.minimum.laptop_gpu.typical_laptop_brands.slice(0, 3).join(', ')}
-  - Backends: ${results.laptop_hardware.minimum.laptop_gpu.backends.join(', ')}
+GPU: ${results.laptop_hardware.minimum.laptop_gpu?.short_name || 'N/A'}
+  - Brand: ${results.laptop_hardware.minimum.laptop_gpu?.brand || 'N/A'}
+  - Form Factor: ${results.laptop_hardware.minimum.laptop_gpu?.form_factor || 'N/A'}
+  - VRAM: ${results.laptop_hardware.minimum.laptop_gpu?.vram_gb ? `${results.laptop_hardware.minimum.laptop_gpu.vram_gb} GB` : results.laptop_hardware.minimum.laptop_gpu?.unified_memory_max_gb ? `${results.laptop_hardware.minimum.laptop_gpu.unified_memory_max_gb} GB Unified Memory` : 'N/A'}
+  - Bandwidth: ${safeFixed(results.laptop_hardware.minimum.laptop_gpu?.bandwidth_gbps)} GB/s
+  - Estimated Speed: ${safeFixed(results.laptop_hardware.minimum.estimated_tps)} tok/s
+  - Price: ${results.laptop_hardware.minimum.laptop_gpu?.typical_laptop_price_usd ? `$${results.laptop_hardware.minimum.laptop_gpu.typical_laptop_price_usd}` : 'N/A'}
+  - Found in: ${safeJoin(results.laptop_hardware.minimum.laptop_gpu?.typical_laptop_brands)}
+  - Backends: ${safeJoin(results.laptop_hardware.minimum.laptop_gpu?.backends)}
 
-` : ''}${results.laptop_hardware.ideal ? `
+` : ''}${results.laptop_hardware?.ideal ? `
 IDEAL LAPTOP CONFIGURATION:
 ---------------------------
-GPU: ${results.laptop_hardware.ideal.laptop_gpu.short_name}
-  - Brand: ${results.laptop_hardware.ideal.laptop_gpu.brand}
-  - Form Factor: ${results.laptop_hardware.ideal.laptop_gpu.form_factor}
-  - VRAM: ${results.laptop_hardware.ideal.laptop_gpu.vram_gb ? `${results.laptop_hardware.ideal.laptop_gpu.vram_gb} GB` : `${results.laptop_hardware.ideal.laptop_gpu.unified_memory_max_gb} GB Unified Memory`}
-  - Bandwidth: ${results.laptop_hardware.ideal.laptop_gpu.bandwidth_gbps.toFixed(1)} GB/s
-  - Estimated Speed: ${results.laptop_hardware.ideal.estimated_tps.toFixed(1)} tok/s
-  - Price: ${results.laptop_hardware.ideal.laptop_gpu.typical_laptop_price_usd ? `$${results.laptop_hardware.ideal.laptop_gpu.typical_laptop_price_usd}` : 'N/A'}
-  - Found in: ${results.laptop_hardware.ideal.laptop_gpu.typical_laptop_brands.slice(0, 3).join(', ')}
-  - Backends: ${results.laptop_hardware.ideal.laptop_gpu.backends.join(', ')}
+GPU: ${results.laptop_hardware.ideal.laptop_gpu?.short_name || 'N/A'}
+  - Brand: ${results.laptop_hardware.ideal.laptop_gpu?.brand || 'N/A'}
+  - Form Factor: ${results.laptop_hardware.ideal.laptop_gpu?.form_factor || 'N/A'}
+  - VRAM: ${results.laptop_hardware.ideal.laptop_gpu?.vram_gb ? `${results.laptop_hardware.ideal.laptop_gpu.vram_gb} GB` : results.laptop_hardware.ideal.laptop_gpu?.unified_memory_max_gb ? `${results.laptop_hardware.ideal.laptop_gpu.unified_memory_max_gb} GB Unified Memory` : 'N/A'}
+  - Bandwidth: ${safeFixed(results.laptop_hardware.ideal.laptop_gpu?.bandwidth_gbps)} GB/s
+  - Estimated Speed: ${safeFixed(results.laptop_hardware.ideal.estimated_tps)} tok/s
+  - Price: ${results.laptop_hardware.ideal.laptop_gpu?.typical_laptop_price_usd ? `$${results.laptop_hardware.ideal.laptop_gpu.typical_laptop_price_usd}` : 'N/A'}
+  - Found in: ${safeJoin(results.laptop_hardware.ideal.laptop_gpu?.typical_laptop_brands)}
+  - Backends: ${safeJoin(results.laptop_hardware.ideal.laptop_gpu?.backends)}
 
-` : ''}${results.laptop_hardware.best ? `
+` : ''}${results.laptop_hardware?.best ? `
 BEST LAPTOP CONFIGURATION:
 --------------------------
-GPU: ${results.laptop_hardware.best.laptop_gpu.short_name}
-  - Brand: ${results.laptop_hardware.best.laptop_gpu.brand}
-  - Form Factor: ${results.laptop_hardware.best.laptop_gpu.form_factor}
-  - VRAM: ${results.laptop_hardware.best.laptop_gpu.vram_gb ? `${results.laptop_hardware.best.laptop_gpu.vram_gb} GB` : `${results.laptop_hardware.best.laptop_gpu.unified_memory_max_gb} GB Unified Memory`}
-  - Bandwidth: ${results.laptop_hardware.best.laptop_gpu.bandwidth_gbps.toFixed(1)} GB/s
-  - Estimated Speed: ${results.laptop_hardware.best.estimated_tps.toFixed(1)} tok/s
-  - Price: ${results.laptop_hardware.best.laptop_gpu.typical_laptop_price_usd ? `$${results.laptop_hardware.best.laptop_gpu.typical_laptop_price_usd}` : 'N/A'}
-  - Found in: ${results.laptop_hardware.best.laptop_gpu.typical_laptop_brands.slice(0, 3).join(', ')}
-  - Backends: ${results.laptop_hardware.best.laptop_gpu.backends.join(', ')}
+GPU: ${results.laptop_hardware.best.laptop_gpu?.short_name || 'N/A'}
+  - Brand: ${results.laptop_hardware.best.laptop_gpu?.brand || 'N/A'}
+  - Form Factor: ${results.laptop_hardware.best.laptop_gpu?.form_factor || 'N/A'}
+  - VRAM: ${results.laptop_hardware.best.laptop_gpu?.vram_gb ? `${results.laptop_hardware.best.laptop_gpu.vram_gb} GB` : results.laptop_hardware.best.laptop_gpu?.unified_memory_max_gb ? `${results.laptop_hardware.best.laptop_gpu.unified_memory_max_gb} GB Unified Memory` : 'N/A'}
+  - Bandwidth: ${safeFixed(results.laptop_hardware.best.laptop_gpu?.bandwidth_gbps)} GB/s
+  - Estimated Speed: ${safeFixed(results.laptop_hardware.best.estimated_tps)} tok/s
+  - Price: ${results.laptop_hardware.best.laptop_gpu?.typical_laptop_price_usd ? `$${results.laptop_hardware.best.laptop_gpu.typical_laptop_price_usd}` : 'N/A'}
+  - Found in: ${safeJoin(results.laptop_hardware.best.laptop_gpu?.typical_laptop_brands)}
+  - Backends: ${safeJoin(results.laptop_hardware.best.laptop_gpu?.backends)}
 
-` : ''}${results.laptop_hardware.raspberry_pi ? `
+` : ''}${results.laptop_hardware?.raspberry_pi ? `
 RASPBERRY PI OPTION (Edge Computing):
 --------------------------------------
-Device: ${results.laptop_hardware.raspberry_pi.device}
-  - CPU: ${results.laptop_hardware.raspberry_pi.cpu}
-  - RAM: ${results.laptop_hardware.raspberry_pi.ram_gb} GB
-  - Power: ${results.laptop_hardware.raspberry_pi.power_consumption_watts}W
-  - Estimated Speed: ~${results.laptop_hardware.raspberry_pi.estimated_tps.toFixed(1)} tok/s (CPU-only)
-  - Price: $${results.laptop_hardware.raspberry_pi.typical_price_usd}
-  - Note: ${results.laptop_hardware.raspberry_pi.notes}
+Device: ${results.laptop_hardware.raspberry_pi?.device || 'N/A'}
+  - CPU: ${results.laptop_hardware.raspberry_pi?.cpu || 'N/A'}
+  - RAM: ${results.laptop_hardware.raspberry_pi?.ram_gb || 'N/A'} GB
+  - Power: ${results.laptop_hardware.raspberry_pi?.power_consumption_watts || 'N/A'}W
+  - Estimated Speed: ~${safeFixed(results.laptop_hardware.raspberry_pi?.estimated_tps)} tok/s (CPU-only)
+  - Price: $${results.laptop_hardware.raspberry_pi?.typical_price_usd || 'N/A'}
+  - Note: ${results.laptop_hardware.raspberry_pi?.notes || 'N/A'}
 
 ` : ''}` : ''}
 ================================================================================
@@ -195,6 +207,10 @@ https://github.com/yourusername/llmcalculator
     link.click()
     document.body.removeChild(link)
     URL.revokeObjectURL(url)
+    } catch (err) {
+      console.error('Download failed:', err)
+      alert('Failed to download results. Check console for details.')
+    }
   }
 
   return (

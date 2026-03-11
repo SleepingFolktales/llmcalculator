@@ -12,14 +12,14 @@ router = APIRouter()
 @router.get("/models", response_model=List[Dict])
 async def search_models(
     q: str = Query("", description="Search query"),
-    limit: int = Query(20, ge=1, le=100, description="Maximum results")
+    limit: int = Query(20, ge=1, le=1000, description="Maximum results")
 ):
     """
     Search for models in the database.
     
     Args:
         q: Search query (model name, provider, parameter count)
-        limit: Maximum number of results
+        limit: Maximum number of results (default 20, use 0 or very high number for all)
     
     Returns:
         List of matching models
@@ -27,7 +27,8 @@ async def search_models(
     loader = get_data_loader()
     
     if not q:
-        return loader.get_all_models()[:limit]
+        # Return all models when no query provided
+        return loader.get_all_models()[:limit] if limit > 0 else loader.get_all_models()
     
     results = loader.search_models(q, limit=limit)
     

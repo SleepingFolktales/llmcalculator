@@ -4,7 +4,7 @@ API routes for precision formats
 
 from fastapi import APIRouter
 from typing import List, Dict
-from ..utils.data_loader import get_data_loader
+from utils.data_loader import get_data_loader
 
 router = APIRouter(prefix="/precision", tags=["precision"])
 
