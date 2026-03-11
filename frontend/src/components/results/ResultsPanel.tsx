@@ -160,33 +160,177 @@ export default function ResultsPanel({ results }: ResultsPanelProps) {
     )
   }
 
+  const formatTierDetails = (tier: TierRecommendations, tierName: string) => {
+    const desktop = tier.desktop
+    let details = `\n${'='.repeat(80)}\n${tierName.toUpperCase()} TIER\n${'='.repeat(80)}\n`
+    details += `Tier Label: ${desktop.tier_label}\n`
+    details += `Estimated Cost: $${desktop.estimated_cost_usd?.toLocaleString() || 'N/A'}\n\n`
+
+    // Desktop Hardware Details
+    details += `DESKTOP HARDWARE:\n${'-'.repeat(40)}\n`
+    if (desktop.gpu) {
+      details += `GPU: ${desktop.gpu.name}\n`
+      details += `  - Short Name: ${desktop.gpu.short_name}\n`
+      details += `  - VRAM: ${desktop.gpu.vram_gb}GB per unit\n`
+      details += `  - Total VRAM: ${desktop.gpu.total_vram_gb}GB (${desktop.gpu.n_units} unit(s))\n`
+      details += `  - Bandwidth: ${desktop.gpu.vram_bandwidth_gbps} Gbps\n`
+      details += `  - TDP: ${desktop.gpu.tdp_watts}W\n`
+      details += `  - Form Factor: ${desktop.gpu.form_factor}\n`
+      details += `  - Price: $${desktop.gpu.msrp_usd?.toLocaleString() || 'N/A'}\n`
+    }
+    if (desktop.cpu) {
+      details += `\nCPU: ${desktop.cpu.name}\n`
+      details += `  - Cores: ${desktop.cpu.cores_total}\n`
+      details += `  - Memory Bandwidth: ${desktop.cpu.memory_bandwidth_gbps} Gbps\n`
+      details += `  - TDP: ${desktop.cpu.tdp_watts}W\n`
+      details += `  - Max RAM: ${desktop.cpu.max_ram_gb}GB\n`
+    }
+    details += `\nMemory Configuration:\n`
+    details += `  - System RAM: ${desktop.ram_gb}GB (${desktop.ram_type})\n`
+    details += `  - VRAM Usage: ${desktop.vram_used_gb.toFixed(1)}GB / ${desktop.vram_total_gb.toFixed(0)}GB\n`
+    details += `  - VRAM Headroom: ${desktop.vram_headroom_pct.toFixed(1)}%\n`
+    details += `  - System RAM Usage: ${desktop.ram_used_gb.toFixed(1)}GB\n`
+
+    // Performance Details
+    details += `\nPerformance Estimates:\n`
+    details += `  - Per Instance: ${desktop.performance.per_instance_tps.toFixed(0)} tok/s\n`
+    details += `  - Total System: ${desktop.performance.total_system_tps.toFixed(0)} tok/s\n`
+    details += `  - First Token Latency: ${desktop.performance.latency_first_token_ms.toFixed(1)}ms\n`
+    details += `  - Per Token Latency: ${desktop.performance.latency_per_token_ms.toFixed(1)}ms\n`
+    details += `  - Run Mode: ${desktop.performance.run_mode}\n`
+    details += `  - Recommended Quantization: ${desktop.performance.recommended_quant}\n`
+    details += `  - Quality Note: ${desktop.performance.quant_quality_note}\n`
+
+    // Power Details
+    details += `\nPower & Thermal:\n`
+    details += `  - Total Power: ${desktop.power.total_watts}W\n`
+    details += `  - GPU Power: ${desktop.power.gpu_watts}W\n`
+    details += `  - CPU Power: ${desktop.power.cpu_watts}W\n`
+    details += `  - Monthly Usage: ${desktop.power.monthly_kwh.toFixed(1)} kWh\n`
+    if (desktop.power.monthly_cost_usd) {
+      details += `  - Monthly Cost: $${desktop.power.monthly_cost_usd.toFixed(2)} (at $0.12/kWh)\n`
+    }
+    details += `  - Thermal Note: ${desktop.power.thermal_note}\n`
+
+    // Fit Notes
+    if (desktop.fit_notes && desktop.fit_notes.length > 0) {
+      details += `\nFit Notes:\n`
+      desktop.fit_notes.forEach(note => {
+        details += `  • ${note}\n`
+      })
+    }
+
+    // Trade-offs
+    if (desktop.trade_offs) {
+      details += `\nTrade-offs:\n  ${desktop.trade_offs}\n`
+    }
+
+    // Bottleneck
+    if (desktop.bottleneck) {
+      details += `\nBottleneck: ${desktop.bottleneck}\n`
+    }
+
+    // Laptop Option
+    if (tier.laptop) {
+      details += `\nLAPTOP OPTION:\n${'-'.repeat(40)}\n`
+      details += `GPU: ${tier.laptop.laptop_gpu.name}\n`
+      details += `  - Short Name: ${tier.laptop.laptop_gpu.short_name}\n`
+      details += `  - Brand: ${tier.laptop.laptop_gpu.brand}\n`
+      details += `  - Form Factor: ${tier.laptop.laptop_gpu.form_factor}\n`
+      details += `  - VRAM: ${tier.laptop.laptop_gpu.vram_gb ? `${tier.laptop.laptop_gpu.vram_gb}GB` : `${tier.laptop.laptop_gpu.unified_memory_max_gb}GB Unified Memory`}\n`
+      details += `  - Effective VRAM: ${tier.laptop.laptop_gpu.effective_vram_gb.toFixed(1)}GB\n`
+      details += `  - Bandwidth: ${tier.laptop.laptop_gpu.bandwidth_gbps} GB/s\n`
+      details += `  - Estimated Speed: ${tier.laptop.estimated_tps.toFixed(0)} tok/s\n`
+      if (tier.laptop.laptop_gpu.typical_laptop_price_usd) {
+        details += `  - Typical Laptop Price: $${tier.laptop.laptop_gpu.typical_laptop_price_usd.toLocaleString()}\n`
+      }
+      details += `  - Backends: ${tier.laptop.laptop_gpu.backends.join(', ')}\n`
+      details += `  - Unified Memory: ${tier.laptop.laptop_gpu.is_unified_memory ? 'Yes' : 'No'}\n`
+      if (tier.laptop.notes) {
+        details += `  - Notes: ${tier.laptop.notes}\n`
+      }
+    }
+
+    // Supercomputer Option
+    if (tier.supercomputer) {
+      details += `\nSUPERCOMPUTER OPTION:\n${'-'.repeat(40)}\n`
+      details += `System: ${tier.supercomputer.system.name}\n`
+      details += `  - Short Name: ${tier.supercomputer.system.short_name}\n`
+      details += `  - Brand: ${tier.supercomputer.system.brand}\n`
+      details += `  - Category: ${tier.supercomputer.system.category}\n`
+      details += `  - Subcategory: ${tier.supercomputer.system.subcategory}\n`
+      details += `  - Form Factor: ${tier.supercomputer.system.form_factor}\n`
+      details += `  - Total VRAM: ${tier.supercomputer.system.total_vram_gb >= 1000 ? `${(tier.supercomputer.system.total_vram_gb / 1024).toFixed(1)}TB` : `${tier.supercomputer.system.total_vram_gb.toFixed(0)}GB`}\n`
+      if (tier.supercomputer.system.vram_bandwidth_tbps) {
+        details += `  - Memory Bandwidth: ${tier.supercomputer.system.vram_bandwidth_tbps.toFixed(1)} TB/s\n`
+      }
+      details += `  - Power: ${tier.supercomputer.system.power_watts >= 1000 ? `${(tier.supercomputer.system.power_watts / 1000).toFixed(1)}kW` : `${tier.supercomputer.system.power_watts}W`}\n`
+      if (tier.supercomputer.system.msrp_usd) {
+        details += `  - Price: $${tier.supercomputer.system.msrp_usd.toLocaleString()}\n`
+      }
+      details += `  - Use Cases: ${tier.supercomputer.system.use_cases.join(', ')}\n`
+      details += `  - Backends: ${tier.supercomputer.system.backends.join(', ')}\n`
+      details += `  - Why This Tier: ${tier.supercomputer.fit_rationale}\n`
+      if (tier.supercomputer.system.notes) {
+        details += `  - Notes: ${tier.supercomputer.system.notes}\n`
+      }
+    }
+
+    return details
+  }
+
   const handleDownload = () => {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
     const filename = `llm-calc-${timestamp}.txt`
-    const content = `LLM Hardware Calculator Results
-Generated: ${new Date().toLocaleString()}
+    
+    let content = `${'='.repeat(80)}\n`
+    content += `LLM HARDWARE CALCULATOR - DETAILED RESULTS\n`
+    content += `${'='.repeat(80)}\n\n`
+    content += `Generated: ${new Date().toLocaleString()}\n`
+    content += `Data Freshness: ${results.data_freshness}\n\n`
+    
+    content += `SCENARIO SUMMARY:\n${'-'.repeat(80)}\n`
+    content += `${results.scenario_summary}\n\n`
+    content += `Deployment Mode: ${results.deployment_mode}\n`
+    content += `Total Models: ${results.model_breakdown.length}\n\n`
 
-Scenario: ${results.scenario_summary}
-Deployment: ${results.deployment_mode}
+    content += `MODEL BREAKDOWN:\n${'-'.repeat(80)}\n`
+    results.model_breakdown.forEach((model, i) => {
+      content += `\nModel ${i + 1}: ${model.model_name}\n`
+      content += `  - Provider: ${model.provider}\n`
+      content += `  - Parameters: ${model.params_b}B\n`
+      content += `  - Instances: ${model.n_instances}\n`
+      content += `  - Quantization: ${model.quant_used}\n`
+      content += `  - Memory per Instance: ${model.memory_per_instance_gb.toFixed(1)}GB\n`
+      content += `  - Total Memory: ${model.total_memory_gb.toFixed(1)}GB\n`
+      if (model.is_moe) {
+        content += `  - MoE Model: Yes${model.moe_note ? ` (${model.moe_note})` : ''}\n`
+      }
+    })
 
-=== MINIMUM TIER ===
-${results.minimum.desktop.tier_label}
-Cost: $${results.minimum.desktop.estimated_cost_usd?.toLocaleString()}
-GPU: ${results.minimum.desktop.gpu?.name}
+    // Add detailed tier information
+    content += formatTierDetails(results.minimum, 'Minimum')
+    content += formatTierDetails(results.ideal, 'Ideal')
+    content += formatTierDetails(results.best, 'Best')
 
-=== IDEAL TIER ===
-${results.ideal.desktop.tier_label}
-Cost: $${results.ideal.desktop.estimated_cost_usd?.toLocaleString()}
-GPU: ${results.ideal.desktop.gpu?.name}
+    // Upgrade Path
+    if (results.upgrade_path.length > 0) {
+      content += `\n${'='.repeat(80)}\nUPGRADE PATH\n${'='.repeat(80)}\n`
+      results.upgrade_path.forEach((path, i) => {
+        content += `${i + 1}. ${path}\n`
+      })
+    }
 
-=== BEST TIER ===
-${results.best.desktop.tier_label}
-Cost: $${results.best.desktop.estimated_cost_usd?.toLocaleString()}
-GPU: ${results.best.desktop.gpu?.name}
+    // Calculation Notes
+    if (results.calculation_notes.length > 0) {
+      content += `\n${'='.repeat(80)}\nCALCULATION NOTES\n${'='.repeat(80)}\n`
+      results.calculation_notes.forEach(note => {
+        content += `• ${note}\n`
+      })
+    }
 
-Upgrade Path:
-${results.upgrade_path.join('\n')}
-`
+    content += `\n${'='.repeat(80)}\nEND OF REPORT\n${'='.repeat(80)}\n`
+
     const blob = new Blob([content], { type: 'text/plain' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
