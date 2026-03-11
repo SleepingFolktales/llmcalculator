@@ -1,0 +1,1180 @@
+[
+{
+    "id": "dgx-spark",
+    "name": "NVIDIA DGX Spark",
+    "short_name": "DGX Spark",
+    "brand": "NVIDIA",
+    "category": "ai_system",
+    "subcategory": "personal_ai_supercomputer",
+    "chip": "GB10 Grace Blackwell Superchip",
+    "architecture": "Grace Blackwell",
+    "generation": "Blackwell (5th Gen Tensor Core)",
+    "process_node": "TSMC 3nm",
+    "packaging": "2.5D SoC (NVIDIA + MediaTek collaboration)",
+    "cpu": {
+      "model": "Grace (Arm)",
+      "cores": 20,
+      "cores_perf": 10,
+      "cores_eff": 10,
+      "core_types": [
+        "Cortex-X925",
+        "Cortex-A725"
+      ],
+      "interconnect_to_gpu": "NVLink-C2C (coherent)"
+    },
+    "gpu": {
+      "architecture": "Blackwell",
+      "cuda_cores": 6144,
+      "tensor_core_gen": "5th Generation",
+      "rt_core_gen": "4th Generation",
+      "nvenc_count": 1,
+      "nvdec_count": 1,
+      "copy_engines": 2,
+      "l2_cache_mb": 24
+    },
+    "memory": {
+      "type": "LPDDR5x",
+      "capacity_gb": 128,
+      "unified": true,
+      "interface_bits": 256,
+      "speed_mhz": 8533,
+      "bandwidth_gbps": 273,
+      "channels": 16,
+      "notes": "Unified CPU+GPU coherent memory; GPU sees ~600 GB/s aggregate via internal fabric"
+    },
+    "compute_performance": {
+      "fp4_tops_sparse": 1000,
+      "fp4_pflops_sparse": 1,
+      "notes": "1 PFLOP FP4 with sparsity. Dense FP4 ~500 TOPS. Roughly between RTX 5070 and 5070 Ti in raw AI throughput."
+    },
+    "storage": {
+      "options_tb": [
+        1,
+        4
+      ],
+      "type": "NVMe M.2",
+      "self_encrypting": true
+    },
+    "networking": {
+      "connectx_nic": "ConnectX-7",
+      "qsfp_ports": 2,
+      "qsfp_speed_per_port_gbe": 200,
+      "qsfp_aggregate_gbe": 200,
+      "ethernet_rj45_gbe": 10,
+      "wifi": "Wi-Fi 7",
+      "bluetooth": "5.4",
+      "notes": "Two units can be daisy-chained for dual-Spark 256GB cluster; supports models up to 405B params"
+    },
+    "connectivity": {
+      "usb_type_c": 4,
+      "hdmi": "1x HDMI 2.1a"
+    },
+    "power": {
+      "system_psu_watts": 240,
+      "soc_tdp_watts": 140,
+      "remaining_for_peripherals_watts": 100
+    },
+    "physical": {
+      "form_factor": "desktop_sff",
+      "dimensions_mm": "150 x 150 x 50.5",
+      "weight_kg": 1.2
+    },
+    "software": {
+      "os": "DGX OS (Ubuntu-based)",
+      "preinstalled_stack": [
+        "NVIDIA AI stack",
+        "Docker",
+        "NIM",
+        "TRT-LLM",
+        "PyTorch"
+      ]
+    },
+    "llm_capability": {
+      "max_params_standalone_b": 200,
+      "max_params_dual_spark_b": 405,
+      "precision": "FP4",
+      "use_cases": [
+        "inference",
+        "fine-tuning",
+        "prototyping"
+      ]
+    },
+    "backends": [
+      "CUDA",
+      "TRT-LLM",
+      "Ollama",
+      "SGLang"
+    ],
+    "msrp_usd": 3999,
+    "release_date": "2025-10-17",
+    "notes": "World's smallest AI supercomputer. Desktop form factor. Ideal for local LLM dev up to 200B params. Co-developed with MediaTek. Successor to 'Project DIGITS' announcement at CES 2025."
+  },
+  {
+    "id": "dgx-station-a100-320g",
+    "name": "NVIDIA DGX Station A100 320G",
+    "short_name": "DGX Station A100 320G",
+    "brand": "NVIDIA",
+    "category": "ai_system",
+    "subcategory": "workstation_supercomputer",
+    "architecture": "Ampere",
+    "generation": "A100 (3rd Gen Tensor Core)",
+    "process_node": "TSMC 7nm",
+    "cpu": {
+      "model": "AMD EPYC 7742 (Rome)",
+      "cores": 64,
+      "base_clock_ghz": 2.25,
+      "boost_clock_ghz": 3.4,
+      "tdp_watts": 225,
+      "pcie_gen": 4
+    },
+    "gpus": {
+      "count": 4,
+      "model": "A100 SXM4 80GB",
+      "architecture": "Ampere",
+      "vram_per_gpu_gb": 80,
+      "vram_type": "HBM2e",
+      "vram_bandwidth_per_gpu_tbps": 1.935,
+      "total_vram_gb": 320,
+      "total_vram_bandwidth_tbps": 7.74,
+      "cuda_cores_per_gpu": 6912,
+      "tensor_core_gen": "3rd Generation",
+      "nvlink_gen": "3rd Gen",
+      "nvlink_bw_bidirectional_gbps": 200,
+      "tdp_per_gpu_watts": 400,
+      "mig_supported": true,
+      "mig_instances_per_gpu": 7,
+      "interconnect": "SXM4 + NVLink"
+    },
+    "compute_performance": {
+      "fp16_pflops": 2.5,
+      "int8_peta_ops": 5,
+      "fp32_tflops_per_gpu": 19.5,
+      "fp16_tflops_per_gpu": 312,
+      "tf32_tflops_per_gpu": 156
+    },
+    "memory": {
+      "type": "DDR4",
+      "capacity_gb": 512,
+      "channels": 8
+    },
+    "storage": {
+      "os_nvme_tb": 1.92,
+      "data_nvme_u2_max_tb": 7.68,
+      "type": "NVMe M.2 + NVMe U.2"
+    },
+    "networking": {
+      "ethernet_gbe": [
+        10,
+        10,
+        1
+      ],
+      "notes": "2x 10GbE + 1x 1GbE management. No InfiniBand in base config."
+    },
+    "power": {
+      "system_max_watts": 1500,
+      "cooling": "Refrigerant-based liquid cooling (quiet, maintenance-free)"
+    },
+    "physical": {
+      "form_factor": "tower_workstation",
+      "orientation": "tower"
+    },
+    "software": {
+      "os": "DGX OS (Ubuntu-based)"
+    },
+    "llm_capability": {
+      "use_cases": [
+        "training",
+        "fine-tuning",
+        "inference"
+      ],
+      "notes": "First workstation supporting MIG; 28 MIG instances total across 4 GPUs"
+    },
+    "backends": [
+      "CUDA"
+    ],
+    "msrp_usd": 149000,
+    "release_date": "2021-06-01",
+    "notes": "320G variant (4x 80GB A100 SXM4). 160G variant also available at $99,000. Only office-friendly system with 4 fully NVLink-interconnected A100s."
+  },
+  {
+    "id": "dgx-a100-640g",
+    "name": "NVIDIA DGX A100 640GB",
+    "short_name": "DGX A100 640G",
+    "brand": "NVIDIA",
+    "category": "ai_system",
+    "subcategory": "rack_server",
+    "architecture": "Ampere",
+    "generation": "A100 (3rd Gen Tensor Core)",
+    "process_node": "TSMC 7nm",
+    "cpu": {
+      "count": 2,
+      "model": "AMD EPYC 7742 (Rome)",
+      "cores_per_cpu": 64,
+      "total_cores": 128,
+      "base_clock_ghz": 2.25,
+      "boost_clock_ghz": 3.4,
+      "pcie_gen": 4
+    },
+    "gpus": {
+      "count": 8,
+      "model": "A100 SXM4 80GB",
+      "architecture": "Ampere",
+      "vram_per_gpu_gb": 80,
+      "vram_type": "HBM2e",
+      "vram_bandwidth_per_gpu_tbps": 1.935,
+      "total_vram_gb": 640,
+      "total_vram_bandwidth_tbps": 15.48,
+      "cuda_cores_per_gpu": 6912,
+      "tensor_core_gen": "3rd Generation",
+      "nvswitch_count": 6,
+      "nvlink_gen": "3rd Gen",
+      "nvlink_bw_bidirectional_per_gpu_gbps": 600,
+      "tdp_per_gpu_watts": 400,
+      "mig_supported": true
+    },
+    "compute_performance": {
+      "fp16_pflops": 5,
+      "int8_peta_ops": 10,
+      "fp32_tflops_per_gpu": 19.5,
+      "fp16_tflops_per_gpu": 312,
+      "tf32_tflops_per_gpu": 156
+    },
+    "memory": {
+      "type": "DDR4",
+      "capacity_gb": 1024,
+      "channels": 16
+    },
+    "storage": {
+      "os_nvme_tb": 1.92,
+      "data_nvme_tb": 15,
+      "type": "NVMe (PCIe Gen4)"
+    },
+    "networking": {
+      "infiniband_ports": 8,
+      "ib_speed_gbps": 200,
+      "ib_type": "HDR InfiniBand ConnectX-6",
+      "total_fabric_bandwidth_gbps": 1600
+    },
+    "power": {
+      "system_max_watts": 6500,
+      "cooling": "Air-cooled"
+    },
+    "physical": {
+      "form_factor": "rack_server",
+      "rack_units": 6
+    },
+    "software": {
+      "os": "DGX OS (Ubuntu-based)"
+    },
+    "llm_capability": {
+      "use_cases": [
+        "training",
+        "fine-tuning",
+        "inference"
+      ],
+      "cluster_scale": "DGX SuperPOD (up to 140 nodes)"
+    },
+    "backends": [
+      "CUDA"
+    ],
+    "msrp_usd": 199000,
+    "release_date": "2020-05-14",
+    "notes": "3rd gen DGX server. First DGX with AMD EPYC CPU. 320GB (8x40GB) variant also available at lower cost. Foundation for Selene supercomputer (#5 TOP500 in 2020)."
+  },
+  {
+    "id": "dgx-h100",
+    "name": "NVIDIA DGX H100",
+    "short_name": "DGX H100",
+    "brand": "NVIDIA",
+    "category": "ai_system",
+    "subcategory": "rack_server",
+    "architecture": "Hopper",
+    "generation": "H100 (4th Gen Tensor Core)",
+    "process_node": "TSMC 4N",
+    "cpu": {
+      "count": 2,
+      "model": "Intel Xeon Platinum 8480C (Sapphire Rapids)",
+      "cores_per_cpu": 56,
+      "total_cores": 112,
+      "base_clock_ghz": 2,
+      "boost_clock_ghz": 3.8,
+      "tdp_per_cpu_watts": 350,
+      "pcie_gen": 5
+    },
+    "gpus": {
+      "count": 8,
+      "model": "H100 SXM5 80GB",
+      "architecture": "Hopper",
+      "vram_per_gpu_gb": 80,
+      "vram_type": "HBM3",
+      "vram_bandwidth_per_gpu_tbps": 3.35,
+      "total_vram_gb": 640,
+      "total_vram_bandwidth_tbps": 26.8,
+      "cuda_cores_per_gpu": 16896,
+      "tensor_core_gen": "4th Generation",
+      "nvswitch_count": 4,
+      "nvlink_gen": "4th Gen",
+      "nvlink_bw_bidirectional_per_gpu_gbps": 900,
+      "tdp_per_gpu_watts": 700,
+      "mig_supported": true,
+      "mig_instances_per_gpu": 7,
+      "transformer_engine": true
+    },
+    "compute_performance": {
+      "fp8_pflops": 32,
+      "fp16_pflops": 16,
+      "tf32_pflops": 8,
+      "fp64_tflops": 60,
+      "fp8_tflops_per_gpu": 4000,
+      "fp16_tflops_per_gpu": 2000,
+      "tf32_tflops_per_gpu": 1000,
+      "fp32_tflops_per_gpu": 60,
+      "fp64_tflops_per_gpu": 30
+    },
+    "memory": {
+      "type": "DDR5",
+      "capacity_gb": 2048,
+      "notes": "2TB system RAM"
+    },
+    "storage": {
+      "os_nvme_tb": 1.92,
+      "data_nvme_tb": 30.72,
+      "type": "NVMe"
+    },
+    "networking": {
+      "connectx7_ports": 8,
+      "ib_speed_gbps": 400,
+      "ib_type": "HDR400 InfiniBand ConnectX-7",
+      "bluefield3_dpu_count": 2,
+      "total_fabric_bandwidth_tbps": 3.2,
+      "notes": "Uses 'Cedar Fever' cards with 4x ConnectX-7 400Gbps controllers each"
+    },
+    "power": {
+      "system_max_watts": 10200,
+      "cooling": "Air-cooled (enlarged 8U chassis to handle 700W/GPU TDP)"
+    },
+    "physical": {
+      "form_factor": "rack_server",
+      "rack_units": 8
+    },
+    "software": {
+      "os": "DGX OS (Ubuntu-based)"
+    },
+    "llm_capability": {
+      "use_cases": [
+        "training",
+        "fine-tuning",
+        "inference"
+      ],
+      "cluster_scale": "DGX SuperPOD (32-node = 256 H100s, up to 1 ExaFLOP FP8)"
+    },
+    "backends": [
+      "CUDA"
+    ],
+    "msrp_usd": 482000,
+    "release_date": "2022-03-22",
+    "notes": "4th gen DGX server. First GPU with HBM3 and PCIe Gen5. Foundation of Eos supercomputer (576 DGX H100s = 18 ExaFLOPs FP8). ~10.2kW system power. Transformer Engine enables dynamic FP16/FP8 switching."
+  },
+  {
+    "id": "dgx-b200",
+    "name": "NVIDIA DGX B200",
+    "short_name": "DGX B200",
+    "brand": "NVIDIA",
+    "category": "ai_system",
+    "subcategory": "rack_server",
+    "architecture": "Blackwell",
+    "generation": "B200 (5th Gen Tensor Core)",
+    "process_node": "TSMC 4NP (dual-die, 208B transistors)",
+    "cpu": {
+      "count": 2,
+      "model": "Intel Xeon Platinum 8570 (Emerald Rapids)",
+      "cores_per_cpu": 56,
+      "total_cores": 112,
+      "base_clock_ghz": 2.1,
+      "boost_clock_ghz": 4,
+      "pcie_gen": 5
+    },
+    "gpus": {
+      "count": 8,
+      "model": "B200 SXM 192GB",
+      "architecture": "Blackwell",
+      "vram_per_gpu_gb": 192,
+      "vram_type": "HBM3e",
+      "vram_bandwidth_per_gpu_tbps": 8,
+      "total_vram_gb": 1440,
+      "total_vram_bandwidth_tbps": 64,
+      "cuda_cores_per_gpu": 20480,
+      "tensor_core_gen": "5th Generation",
+      "nvswitch_count": 2,
+      "nvlink_gen": "5th Gen",
+      "nvlink_aggregate_bw_tbps": 14.4,
+      "nvlink_per_gpu_bw_tbps": 1.8,
+      "tdp_per_gpu_watts": 1000,
+      "mig_supported": true,
+      "transformer_engine_gen": 2,
+      "fp4_supported": true,
+      "fp8_supported": true
+    },
+    "compute_performance": {
+      "fp8_pflops_training": 72,
+      "fp4_pflops_inference": 144,
+      "fp32_tflops_per_gpu": 60,
+      "fp64_tflops_per_gpu": 40,
+      "notes": "3x training vs DGX H100, 15x inference vs DGX H100"
+    },
+    "memory": {
+      "type": "DDR5",
+      "capacity_gb": 2048,
+      "max_capacity_gb": 4096,
+      "notes": "Standard 2TB, configurable to 4TB"
+    },
+    "storage": {
+      "os_nvme_tb": 3.84,
+      "os_drives": "2x 1.92TB NVMe M.2",
+      "data_nvme_tb": 30.72,
+      "data_drives": "8x 3.84TB NVMe U.2",
+      "type": "NVMe Gen4"
+    },
+    "networking": {
+      "connectx7_osfp_ports": 4,
+      "connectx7_single_port_count": 8,
+      "ib_ethernet_speed_gbps": 400,
+      "ib_type": "ConnectX-7 VPI (IB/Ethernet)",
+      "bluefield3_dpu_count": 2,
+      "bluefield3_speed_gbps": 400,
+      "management_nic_gbps": 10,
+      "management_nic_dual_port_gbps": 100
+    },
+    "power": {
+      "system_max_watts": 14300,
+      "cooling": "Air-cooled (10U)"
+    },
+    "physical": {
+      "form_factor": "rack_server",
+      "rack_units": 10,
+      "dimensions_mm": "444 x 482.2 x 897.1"
+    },
+    "software": {
+      "os": "DGX OS / Ubuntu",
+      "included": [
+        "NVIDIA AI Enterprise",
+        "NVIDIA Mission Control",
+        "NVIDIA Run:ai"
+      ]
+    },
+    "llm_capability": {
+      "use_cases": [
+        "training",
+        "fine-tuning",
+        "inference"
+      ],
+      "cluster_scale": "DGX BasePOD / DGX SuperPOD"
+    },
+    "backends": [
+      "CUDA"
+    ],
+    "msrp_usd": 515000,
+    "release_date": "2024-03-01",
+    "notes": "5th gen DGX server. Blackwell architecture. Dual-die B200 GPU with 208B transistors. First system with FP4 tensor cores. 15x inference improvement over DGX H100. MSRP ~$515K (Broadberry listing)."
+  },
+  {
+    "id": "gb200-nvl72",
+    "name": "NVIDIA GB200 NVL72",
+    "short_name": "GB200 NVL72",
+    "brand": "NVIDIA",
+    "category": "ai_system",
+    "subcategory": "rack_scale",
+    "architecture": "Grace Blackwell",
+    "generation": "Blackwell (5th Gen Tensor Core)",
+    "process_node": "TSMC 4NP (dual-die, 208B transistors per GPU die)",
+    "cpu": {
+      "count": 36,
+      "model": "Grace (Arm Neoverse V2)",
+      "cores_per_cpu": 72,
+      "total_cores": 2592,
+      "notes": "Each GB200 Superchip = 1 Grace CPU + 2 B200 GPUs via NVLink-C2C"
+    },
+    "gpus": {
+      "count": 72,
+      "model": "B200 (Blackwell)",
+      "architecture": "Blackwell",
+      "vram_per_gpu_gb": 192,
+      "vram_type": "HBM3e",
+      "vram_bandwidth_per_gpu_tbps": 8,
+      "total_vram_tb": 13.5,
+      "total_vram_bandwidth_tbps": 576,
+      "superchips": 36,
+      "tensor_core_gen": "5th Generation",
+      "nvlink_gen": "5th Gen",
+      "nvlink_domain_size_gpus": 72,
+      "nvlink_total_bw_tbps": 130,
+      "transformer_engine_gen": 2,
+      "fp4_supported": true,
+      "fp8_supported": true
+    },
+    "compute_performance": {
+      "fp4_exaflops": 1.44,
+      "fp4_pflops": 1440,
+      "fp8_pflops": 720,
+      "fp32_tflops": 5760,
+      "notes": "30x faster LLM inference vs H100 clusters; 25x more energy efficient vs air-cooled H100 at same power; 4x faster LLM training"
+    },
+    "memory": {
+      "notes": "13.5TB unified HBM3e across 72 GPUs operates as single coherent memory space via NVLink"
+    },
+    "networking": {
+      "nvlink_switch_bw_tbps": 130,
+      "external_infiniband": "Optional InfiniBand for scale-out beyond single rack",
+      "notes": "NVLink Switch System connects all 72 GPUs; 130 TB/s low-latency GPU comms"
+    },
+    "power": {
+      "system_max_kw": 120,
+      "liquid_cooled_kw": 115,
+      "air_cooled_kw": 17,
+      "cooling": "Direct liquid cooling (primary) + air (secondary)"
+    },
+    "physical": {
+      "form_factor": "rack_scale",
+      "weight_kg": 1360,
+      "notes": "Single full rack. Liquid cooling infrastructure required."
+    },
+    "software": {
+      "os": "DGX OS / Linux",
+      "included": [
+        "NVIDIA AI Enterprise",
+        "NVLink Switch firmware"
+      ]
+    },
+    "llm_capability": {
+      "max_model_params_trillion": 10,
+      "use_cases": [
+        "frontier model training",
+        "trillion-parameter inference",
+        "MoE at scale"
+      ],
+      "notes": "Entire rack operates as a single massive GPU. 13.5TB unified memory enables model parallelism without InfiniBand overhead."
+    },
+    "backends": [
+      "CUDA"
+    ],
+    "msrp_usd": 2500000,
+    "release_date": "2024-03-01",
+    "notes": "Rack-scale exascale computer. 72 B200 GPUs + 36 Grace CPUs in a single liquid-cooled rack. Treats entire rack as one unified GPU domain. MSRP ~$2-3M per rack. Comparable compute to ~182 H100 SXM GPUs at fraction of footprint."
+  },
+  {
+    "id": "sambanova-sn40l",
+    "name": "SambaNova SN40L RDU",
+    "short_name": "SN40L",
+    "brand": "SambaNova Systems",
+    "category": "ai_accelerator",
+    "subcategory": "dataflow_asic",
+    "architecture": "Cerulean (Reconfigurable Dataflow Unit)",
+    "generation": "4th Gen RDU",
+    "process_node": "TSMC 5nm (5FF)",
+    "packaging": "Dual-die CoWoS-S interposer (2x ~600mm² dies)",
+    "transistors_b": 102,
+    "design_type": "Reconfigurable Dataflow Architecture — NOT a GPU",
+
+    "compute_engines": {
+      "rdu_cores": 1040,
+      "core_types": {
+        "pcu": 1040,
+        "pmu": 1040,
+        "agcu": "per-tile address generation and coalescing units"
+      },
+      "interconnect_on_chip": "2D mesh Reconfigurable Dataflow Network (RDN)",
+      "notes": "PCUs = Pattern Compute Units (compute). PMUs = Pattern Memory Units (distributed SRAM tiles). Coarse-Grained Reconfigurable Array (CGRA) design — fundamentally different from GPU SM or CPU core paradigm."
+    },
+
+    "memory": {
+      "tier_1_on_chip_sram_mb": 520,
+      "tier_1_bandwidth_tbps": "hundreds (distributed across PMUs)",
+      "tier_2_hbm_gb": 64,
+      "tier_2_hbm_bandwidth_tbps": 1.6,
+      "tier_3_ddr_dram_max_tib": 1.5,
+      "tier_3_ddr_bandwidth_gbps": 200,
+      "model_load_hbm_bandwidth_tbps": 1.0,
+      "notes": "3-tier memory is the key architectural differentiator vs GPUs. DDR provides capacity for trillion+ parameter models. Models are staged: DDR → HBM at 1 TB/s, then operated from HBM+SRAM. Sub-10ms model switching."
+    },
+
+    "compute_performance": {
+      "bf16_tflops_per_socket": 638,
+      "fp16_tflops_per_socket_approx": 688,
+      "notes": "Per socket (single chip). 640 BF16 TFLOPS from IEEE ISSCC paper."
+    },
+
+    "tdp_watts_per_socket": 600,
+
+    "software": {
+      "sdk": "SambaNova Dataflow SDK",
+      "compiler": "SambaFlow (auto-fuses operations — no manual kernel writing)",
+      "frameworks": ["PyTorch", "ONNX"],
+      "notes": "Compiler automatically fuses hundreds of operations into single kernel calls — core to performance. Dataflow parallelism; does NOT use CUDA or ROCm."
+    },
+
+    "system_configs": {
+      "sn40l_node": {
+        "sockets": 8,
+        "total_bf16_pflops": 10.2,
+        "total_hbm_tb": 1.0,
+        "notes": "8-socket node. 3.7x faster than DGX H100, 6.6x faster than DGX A100 for CoE inference benchmarks. 19x smaller footprint than GPU equivalent for MoE/CoE serving."
+      }
+    },
+
+    "llm_capability": {
+      "specialty": "Composition of Experts (CoE) / MoE inference",
+      "notable_models": ["DeepSeek R1 671B", "Llama 3.1 70B", "Llama 4 Maverick"],
+      "model_switching_ms_8b": 10,
+      "notes": "Purpose-built for fast model switching between many small expert models. 15-31x faster model switching vs GPU baseline. Single 8-socket node can serve trillion-parameter CoE."
+    },
+
+    "msrp_usd_notes": "Enterprise pricing, not public. Available on SambaNova Cloud and on-premises.",
+    "release_date": "2024-01-01",
+    "notes": "Co-developed with original Stanford CGRA research. Successor is SN50 (5x compute, 4x network BW). SambaNova claims 9x better performance vs H200 at low batch sizes for inference. Air-cooled (10 kWh average per rack). Available as cloud API or on-prem system."
+  },
+
+  {
+    "id": "tenstorrent-wormhole-n150",
+    "name": "Tenstorrent Wormhole n150",
+    "short_name": "Wormhole n150",
+    "brand": "Tenstorrent",
+    "category": "ai_accelerator",
+    "subcategory": "riscv_ai_asic",
+    "architecture": "Tensix (RISC-V based)",
+    "generation": "Wormhole (2nd Gen)",
+    "process_node": "TSMC 12nm",
+    "design_type": "RISC-V CGRA — single chip card",
+
+    "compute_engines": {
+      "tensix_cores": 72,
+      "risc_v_cores_per_tensix": 5,
+      "total_riscv_baby_cores": 360,
+      "on_chip_sram_mb": 108,
+      "notes": "Each Tensix core contains 5 Baby RISC-V cores for data parallelism, memory management, and data flow control. No traditional GPU SM architecture."
+    },
+
+    "memory": {
+      "type": "GDDR6",
+      "capacity_gb": 12,
+      "bandwidth_gbps": 288
+    },
+
+    "compute_performance": {
+      "fp8_tflops": 262,
+      "clock_ghz": 1.0
+    },
+
+    "interconnect": {
+      "type": "Ethernet (400 Gbps per port)",
+      "ports": 2,
+      "notes": "Ethernet used for chip-to-chip — no proprietary interconnect. Multi-chip system looks like single large Tensix mesh to software."
+    },
+
+    "tdp_watts": 160,
+    "form_factor": "3/4-length PCIe card",
+    "msrp_usd": 999,
+
+    "software": {
+      "sdk": "TT-Metalium (open source)",
+      "frameworks": ["PyTorch", "vLLM (Tenstorrent fork)"],
+      "notes": "Fully open-source down to metal level. NOT CUDA. TT-Metalium exposes hardware primitives. Models: Llama, Qwen, Mistral, Mixtral, Falcon."
+    },
+
+    "release_date": "2024-07-01",
+    "notes": "Developer-focused, affordable entry point. Jim Keller (former Apple M1, AMD Zen designer) is CEO. $999 for 12GB at 288 GB/s is competitive for local LLM inference budget segment."
+  },
+
+  {
+    "id": "tenstorrent-wormhole-n300",
+    "name": "Tenstorrent Wormhole n300",
+    "short_name": "Wormhole n300",
+    "brand": "Tenstorrent",
+    "category": "ai_accelerator",
+    "subcategory": "riscv_ai_asic",
+    "architecture": "Tensix (RISC-V based)",
+    "generation": "Wormhole (2nd Gen)",
+    "process_node": "TSMC 12nm",
+    "design_type": "RISC-V CGRA — dual chip card",
+
+    "compute_engines": {
+      "tensix_cores": 128,
+      "total_riscv_baby_cores": 640,
+      "on_chip_sram_mb": 192
+    },
+
+    "memory": {
+      "type": "GDDR6 (aggregated dual-chip)",
+      "capacity_gb": 24,
+      "bandwidth_gbps": 576
+    },
+
+    "compute_performance": {
+      "fp8_tflops": 466,
+      "clock_ghz": 1.0
+    },
+
+    "tdp_watts": 300,
+    "form_factor": "3/4-length PCIe dual-chip card",
+    "msrp_usd": 1399,
+
+    "software": {
+      "sdk": "TT-Metalium",
+      "frameworks": ["PyTorch", "vLLM fork"],
+      "notes": "Two Wormhole chips on one board share 24GB GDDR6. Multi-card systems scale linearly."
+    },
+
+    "workstation_systems": {
+      "tt_loudbox": {
+        "cards": 4,
+        "total_chips": 8,
+        "price_usd": 12000,
+        "cooling": "active air",
+        "cpu": "Intel Xeon 4309Y"
+      },
+      "tt_quietbox": {
+        "cards": 4,
+        "total_chips": 8,
+        "price_usd": 15000,
+        "cooling": "liquid",
+        "cpu": "AMD EPYC 8124P"
+      }
+    },
+
+    "release_date": "2024-07-01",
+    "notes": "Most cost-effective path for 24GB GDDR6 edge AI inference. Dual-chip acts as single unified mesh. 4-card workstation can serve 70B models locally."
+  },
+
+  {
+    "id": "tenstorrent-blackhole-p150",
+    "name": "Tenstorrent Blackhole p150",
+    "short_name": "Blackhole p150",
+    "brand": "Tenstorrent",
+    "category": "ai_accelerator",
+    "subcategory": "riscv_ai_asic",
+    "architecture": "Tensix++ (RISC-V based)",
+    "generation": "Blackhole (3rd Gen)",
+    "process_node": "TSMC 6nm",
+    "design_type": "RISC-V CGRA + Linux-capable on-chip CPU — standalone AI computer",
+
+    "compute_engines": {
+      "tensix_cores": 120,
+      "tensix_note": "Originally 140, reduced to 120 via firmware for yield/stability",
+      "riscv_baby_cores_per_tensix": 5,
+      "total_riscv_baby_cores": 600,
+      "big_riscv_cpu_cores": 16,
+      "big_riscv_note": "16 SiFive Intelligence x280 big RISC-V cores — can boot Linux natively. Blackhole is a standalone AI computer, no host CPU required.",
+      "on_chip_sram_mb": "~SRAM (specs from Hot Chips)"
+    },
+
+    "memory": {
+      "type": "GDDR6",
+      "capacity_gb": 32,
+      "bandwidth_gbps": "N/A — 8 channels GDDR6",
+      "notes": "GDDR6 rather than HBM — cost optimization for developer market. Lower bandwidth than HBM but 32GB capacity."
+    },
+
+    "compute_performance": {
+      "fp8_tflops_dense": 774,
+      "block_fp8_tflops": 387,
+      "fp16_tflops": 387
+    },
+
+    "interconnect": {
+      "ethernet_ports": 10,
+      "ethernet_speed_gbps_per_port": 400,
+      "total_bandwidth_tbps": 1.0,
+      "notes": "10x 400 Gbps Ethernet for chip-to-chip. Can function as AI compute node OR as 11.2 Tbps AI network switch — 'Lego block' topology."
+    },
+
+    "tdp_watts": 300,
+    "form_factor": "PCIe card",
+    "msrp_usd": 999,
+
+    "software": {
+      "sdk": "TT-Metalium (open source)",
+      "frameworks": ["PyTorch", "vLLM fork"],
+      "notes": "Software kernels still Wormhole-optimized as of late 2025 — Blackhole runs them but doesn't fully exploit new core counts yet. Performance expected to improve significantly."
+    },
+
+    "system_configs": {
+      "blackhole_galaxy": {
+        "chips": 32,
+        "topology": "4×8 mesh",
+        "total_fp8_pflops": 23.8,
+        "total_memory_tb": 1.0,
+        "total_memory_bandwidth_tbps": 16,
+        "notes": "32-chip Galaxy = training cluster from single box. Can also act as AI network fabric."
+      }
+    },
+
+    "release_date": "2025-01-01",
+    "notes": "Significant architectural leap from Wormhole. On-chip Linux-capable CPU is unique — no x86 host required. 10x 400G Ethernet enables pure Ethernet training clusters. Software ecosystem still maturing; real-world performance improving rapidly. p100 (single chip, no scale-out) also available at lower price."
+  },
+
+  {
+    "id": "meta-mtia-v2",
+    "name": "Meta MTIA v2 (2i)",
+    "short_name": "MTIA v2",
+    "brand": "Meta Platforms",
+    "category": "ai_accelerator",
+    "subcategory": "hyperscaler_inference_asic",
+    "architecture": "MTIA (custom RISC-V based PE grid)",
+    "generation": "2nd Gen MTIA",
+    "process_node": "TSMC 5nm",
+    "design_type": "Custom ASIC — inference-only, recommendation workloads",
+    "availability": "internal_only",
+
+    "die_area_mm2": 421,
+
+    "compute_engines": {
+      "processing_elements": 64,
+      "pe_grid": "8x8",
+      "pe_components": ["Dot Product Engine (DPE)", "Vector Core", "SIMD unit"],
+      "notes": "Each PE has dedicated matrix (DPE), vector, and SIMD units. NOT a GPU. Focused exclusively on recommendation and ranking inference for Meta products (Facebook, Instagram ads)."
+    },
+
+    "memory": {
+      "on_chip_sram_mb": 256,
+      "on_chip_sram_bandwidth_tbps": 2.7,
+      "local_sram_per_pe_kb": 384,
+      "local_sram_bandwidth_tbps": 1.0,
+      "off_chip_type": "LPDDR5 (NOT HBM)",
+      "off_chip_capacity_gb": 128,
+      "off_chip_bandwidth_gbps": 204.8,
+      "notes": "LPDDR5 instead of HBM is unusual. 13x bandwidth difference between SRAM and DRAM tiers — designed so weight data lives in SRAM, DRAM used for embeddings/capacity. Similar philosophy to Groq/Cerebras but hybrid."
+    },
+
+    "compute_performance": {
+      "int8_tops": 354,
+      "fp16_bf16_tflops": 177,
+      "fp32_tflops": 88,
+      "vs_mtia_v1": "3.5x dense compute, 7x with sparsity",
+      "tops_per_watt": 3.93
+    },
+
+    "clock_ghz": 1.35,
+    "tdp_watts_per_chip": 90,
+    "tdp_watts_per_card": 220,
+    "form_factor": "2-chip PCIe card (PCIe Gen5 x16 total, x8 per chip)",
+
+    "software": {
+      "sdk": "Meta internal + PyTorch 2.0 eager mode",
+      "frameworks": ["PyTorch", "Triton-MTIA compiler backend"],
+      "notes": "PyTorch eager mode support is notable — most non-GPU chips lack this. Sub-1µs job launch time. LLVM with MTIA extensions for compiler."
+    },
+
+    "system_config": {
+      "cards_per_chassis": 12,
+      "chips_per_chassis": 24,
+      "chassis_per_rack": 3,
+      "total_chips_per_rack": 72,
+      "notes": "Low density racks (~16kW accelerator power). Simple to integrate."
+    },
+
+    "llm_capability": {
+      "primary_use": "Deep Learning Recommendation Models (DLRMs)",
+      "production_scale": "Billions of users. Powers Facebook/Instagram ad ranking, feed recommendations.",
+      "not_for": ["LLM training", "general-purpose AI — tightly coupled to Meta DLRM workloads"],
+      "tco_savings_vs_gpu": "44% lower TCO vs GPU for target workloads",
+      "tops_per_watt_vs_h100": "7.8 vs 5.65 (H100 SXM) — 38% more efficient for Meta's workloads"
+    },
+
+    "release_date": "2024-04-10",
+    "notes": "Meta-internal only. Will not be sold or cloud-offered. Powers recommendation engines serving billions of users daily. 44% lower TCO vs GPU for DLRM workloads. Meta is separately developing GenAI-capable future MTIA variants. MTIA v1 was 25W/102 TOPS INT8 on 7nm — v2 is 90W/354 TOPS on 5nm, showing efficiency improvement."
+  },
+
+  {
+    "id": "aws-trainium2-chip",
+    "name": "AWS Trainium2",
+    "short_name": "Trainium2",
+    "brand": "Amazon Web Services (AWS)",
+    "category": "ai_accelerator",
+    "subcategory": "cloud_ai_asic",
+    "architecture": "NeuronCore-V3",
+    "generation": "2nd Gen Trainium",
+    "process_node": "TSMC 5nm",
+    "design_type": "Custom ASIC with 2 compute chiplets + 4 HBM stacks on CoWoS-R organic interposer",
+    "availability": "cloud_only",
+
+    "compute_engines": {
+      "neuron_cores": 8,
+      "notes": "8 NeuronCores per chip. Can be combined into logical cores (LNC). 4x more cores than Trainium1."
+    },
+
+    "vram_gb": 96,
+    "vram_type": "HBM3",
+    "vram_bandwidth_tbps": 2.9,
+
+    "compute_performance": {
+      "fp8_pflops_dense": 1.3,
+      "fp8_pflops_sparse": 5.2,
+      "bf16_tflops_dense": 667
+    },
+
+    "interconnect": {
+      "chip_to_chip": "NeuronLink-v3",
+      "chip_to_chip_bandwidth_tbps": 1.0,
+      "topology_per_instance": "2D torus (NL16)",
+      "scale_out": "EFAv3",
+      "scale_out_bandwidth_tbps": 3.2
+    },
+
+    "system_configs": {
+      "trn2_instance": {
+        "chips": 16,
+        "total_fp8_pflops": 20.8,
+        "total_vram_tb": 1.5,
+        "total_hbm_bandwidth_tbps": 46,
+        "cloud_pricing_per_chip_hour_usd_approx": 1.0
+      },
+      "trn2_ultraserver": {
+        "chips": 64,
+        "topology": "3D torus (NL64)",
+        "total_fp8_pflops": 83.2,
+        "total_vram_tb": 6.0,
+        "total_hbm_bandwidth_tbps": 185,
+        "notable_deployment": "Project Rainier (~500,000 chips training Anthropic Claude)"
+      }
+    },
+
+    "tdp_watts_per_chip": 500,
+    "software": {
+      "sdk": "AWS Neuron SDK",
+      "frameworks": ["PyTorch (TorchNeuron)", "JAX"],
+      "notes": "NOT CUDA. NKI (Neuron Kernel Interface) exposes full ISA."
+    },
+
+    "release_date": "2024-12-01",
+    "notes": "Powers Project Rainier — world's largest non-NVIDIA AI training cluster. 30-40% cheaper than H100 instances per AWS benchmarks."
+  },
+
+  {
+    "id": "aws-trainium3-chip",
+    "name": "AWS Trainium3",
+    "short_name": "Trainium3",
+    "brand": "Amazon Web Services (AWS)",
+    "category": "ai_accelerator",
+    "subcategory": "cloud_ai_asic",
+    "architecture": "NeuronCore (3rd Gen)",
+    "generation": "3rd Gen Trainium",
+    "process_node": "TSMC 3nm",
+    "availability": "cloud_only",
+
+    "vram_gb": 144,
+    "vram_type": "HBM3e",
+    "vram_bandwidth_tbps": 4.9,
+
+    "compute_performance": {
+      "fp8_pflops_dense": 2.52,
+      "data_type_support": ["BF16", "FP16", "FP8", "MXFP8", "MXFP4"],
+      "vs_trainium2": "2x FP8, 1.5x memory, 1.7x bandwidth"
+    },
+
+    "system_configs": {
+      "trn3_ultraserver": {
+        "chips": 144,
+        "topology": "NeuronSwitch-v1 all-to-all switched fabric",
+        "total_fp8_pflops": 362,
+        "total_vram_tb": 20.7,
+        "total_hbm_bandwidth_tbps": 706,
+        "vs_trn2_ultraserver": "4.4x performance, 4x energy efficiency"
+      }
+    },
+
+    "release_date": "2025-12-01",
+    "notes": "AWS's first 3nm chip. NeuronSwitch-v1 replaces torus topology. Trainium4 roadmap: 6x FP4, NVLink Fusion for hybrid NVIDIA deployments."
+  },
+
+  {
+    "id": "groq-lpu-v1",
+    "name": "Groq LPU (GroqCard Accelerator, 1st Gen)",
+    "short_name": "Groq LPU",
+    "brand": "Groq Inc.",
+    "category": "ai_accelerator",
+    "subcategory": "inference_asic",
+    "architecture": "TSP (Tensor Streaming Processor)",
+    "generation": "1st Generation LPU",
+    "process_node": "GlobalFoundries 14nm",
+    "design_type": "Inference ASIC — deterministic execution, SRAM-only",
+    "availability": "cloud_api_only",
+
+    "compute_engines": {
+      "core_design": "Single core (no multi-SM)",
+      "matrix_unit": "320×320 fused dot product",
+      "vector_alus": 5120
+    },
+
+    "memory": {
+      "type": "On-chip SRAM only (NO HBM/DRAM)",
+      "capacity_mb": 230,
+      "bandwidth_tbps": 80,
+      "notes": "80 TB/s on-chip bandwidth. 10x higher than HBM but 230MB vs 80-192GB on GPU peers."
+    },
+
+    "compute_performance": {
+      "int8_tops": 750,
+      "fp16_tflops": 188,
+      "clock_ghz": 0.9,
+      "tdp_watts_approx": 300
+    },
+
+    "inference_perf": {
+      "llama2_70b_tok_per_sec": 300,
+      "llama3_8b_tok_per_sec": 1300,
+      "vs_h100_single_stream": "~10x faster",
+      "latency_model": "deterministic — identical clock cycles per inference regardless of load"
+    },
+
+    "interconnect": {
+      "protocol": "Plesiosynchronous chip-to-chip",
+      "notes": "Cancels clock drift; 576 LPUs act as single core for Llama2-70B"
+    },
+
+    "software": {
+      "sdk": "GroqCloud API (OpenAI-compatible)",
+      "notes": "NOT CUDA. Inference-only. Static compiler. Limited model catalog — models must be pre-compiled for TSP."
+    },
+
+    "msrp_usd": 19948,
+    "release_date": "2024-01-01",
+    "notes": "No hardware sales — cloud API only. 14nm (2-3 nodes behind TSMC 5nm) is deliberate for cost and supply chain. Meta partnership for official Llama API. 1.9M+ GroqCloud developers."
+  },
+
+  {
+    "id": "microsoft-maia-100",
+    "name": "Microsoft Azure Maia 100",
+    "short_name": "Maia 100",
+    "brand": "Microsoft",
+    "category": "ai_accelerator",
+    "subcategory": "hyperscaler_asic",
+    "architecture": "Maia (custom)",
+    "generation": "1st Generation Maia",
+    "process_node": "TSMC 5nm (N5)",
+    "packaging": "CoWoS-S",
+    "die_area_mm2": 820,
+    "availability": "azure_internal_only",
+
+    "compute_engines": {
+      "structure": "16 clusters × 64 tiles",
+      "tensor_unit": "16xRx16 high-speed tensor block",
+      "on_chip_cache_mb": 500,
+      "data_types": ["FP32", "BF16", "MX4", "MX6", "MX9 (microscaling)"],
+      "notes": "500MB on-chip scratchpad — unusually large. MX microscaling formats for compressed inference."
+    },
+
+    "vram_gb": 64,
+    "vram_type": "HBM2e",
+    "vram_bandwidth_tbps": 1.8,
+
+    "networking": {
+      "ports": "12× 400GbE",
+      "all_gather_gbps": 4800,
+      "all_to_all_gbps": 1200,
+      "protocol": "Custom RoCE-like Ethernet (no InfiniBand)",
+      "notes": "Ethernet for both scale-up and scale-out — unique among hyperscaler chips."
+    },
+
+    "tdp_watts_max": 700,
+    "tdp_watts_production": 500,
+
+    "software": {
+      "sdk": "Maia SDK",
+      "frameworks": ["PyTorch (1-line change)", "Triton"],
+      "notes": "Azure-internal only. Powers Azure OpenAI Services / GPT-3.5/GPT-4 inference."
+    },
+
+    "release_date": "2024-08-29",
+    "notes": "HBM2e avoids competing with AMD/NVIDIA for HBM3 supply. Next-gen Maia delayed to 2026. Internal use only — no public API access."
+  },
+
+  {
+    "id": "huawei-ascend-910b",
+    "name": "Huawei Ascend 910B",
+    "short_name": "Ascend 910B",
+    "brand": "Huawei / HiSilicon",
+    "category": "ai_accelerator",
+    "subcategory": "china_domestic_ai_chip",
+    "architecture": "Da Vinci (SIMD)",
+    "process_node": "SMIC 7nm N+2 (DUV only — no EUV)",
+    "design_type": "Custom ASIC — China domestic production",
+
+    "vram_gb": 64,
+    "vram_type": "HBM2e",
+    "vram_bandwidth_gbps": 1200,
+
+    "compute_performance": {
+      "fp16_tflops": 600,
+      "bf16_tflops": 600,
+      "fp8_support": false,
+      "notes": "SIMD-only architecture — no SIMT thread parallelism."
+    },
+
+    "interconnect": "HCCS (Huawei Cache Coherence System)",
+    "tdp_watts": 400,
+
+    "software": {
+      "sdk": "CANN (Compute Architecture for Neural Networks)",
+      "frameworks": ["PyTorch", "TensorFlow", "MindSpore"],
+      "notes": "CANN matured through DeepSeek, Baidu production use. Significantly smaller ecosystem than CUDA."
+    },
+
+    "msrp_cny": 110000,
+    "msrp_usd_approx": 15000,
+    "release_date": "2022-08-01",
+    "notes": "Trained DeepSeek V3/R1 — proved frontier models possible without NVIDIA. 50,000+ chips deployed in China. Being superseded by 910C."
+  },
+
+  {
+    "id": "huawei-ascend-910c",
+    "name": "Huawei Ascend 910C",
+    "short_name": "Ascend 910C",
+    "brand": "Huawei / HiSilicon",
+    "category": "ai_accelerator",
+    "subcategory": "china_domestic_ai_chip",
+    "architecture": "Da Vinci (SIMD), dual-die co-package",
+    "process_node": "GPU dies: SMIC 7nm N+2; CPU/IO dies: TSMC (pre-sanction 2020 stockpile)",
+    "design_type": "Dual co-packaged 910B dies on organic substrate",
+
+    "vram_gb": 96,
+    "vram_type": "HBM2e (from Samsung/SK Hynix pre-sanction stockpile)",
+    "vram_bandwidth_tbps": 1.8,
+    "on_chip_sram_mb": 84,
+
+    "compute_performance": {
+      "fp16_tflops": 800,
+      "int8_tops": 1600,
+      "fp8_support": false
+    },
+
+    "embedded_cpu": {
+      "cores": 16,
+      "isa": "Arm-compatible Taishan",
+      "notes": "Built-in ARM CPU allows chip to boot an OS without host CPU"
+    },
+
+    "interconnect": "HCCS (10-20x less die-to-die bandwidth vs H100 due to organic substrate)",
+    "tdp_watts": 310,
+
+    "manufacturing_risks": {
+      "yield_rate_pct": 30,
+      "stockpile_dependency": "TSMC CPU dies + Samsung/SK Hynix HBM2e both from pre-restriction stockpiles",
+      "export_control_status": "Subject to US export controls expanded in late 2024"
+    },
+
+    "software": {
+      "sdk": "CANN",
+      "frameworks": ["PyTorch", "TensorFlow", "MindSpore"]
+    },
+
+    "msrp_cny_approx": 190000,
+    "msrp_usd_approx": 26000,
+    "release_date": "2024-12-01",
+    "system_level": {
+      "cloudmatrix_384": {
+        "chips": 384,
+        "notes": "384-chip Huawei supernode. Claims superior system-level performance to GB200 NVL72."
+      }
+    },
+    "notes": "China's most powerful domestically-available AI chip. 30% yield rate severely limits supply. Upcoming 910D: 5nm, 4-die, FP8 support (2026 target)."
+  }
+]
