@@ -3,7 +3,7 @@ Pydantic output schemas for API responses
 """
 
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional, List, Dict
 
 
 class GPURecommendation(BaseModel):

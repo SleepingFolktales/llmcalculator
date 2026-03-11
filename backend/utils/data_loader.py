@@ -26,8 +26,11 @@ class DataLoader:
             return
         
         self.models: List[Dict] = []
+        self.models_by_id: Dict[str, Dict] = {}
         self.gpus: List[Dict] = []
+        self.gpus_by_id: Dict[str, Dict] = {}
         self.cpus: List[Dict] = []
+        self.cpus_by_id: Dict[str, Dict] = {}
         self.ram_specs: List[Dict] = []
         self.precision_formats: List[Dict] = []
         self.precision_by_id: Dict[str, Dict] = {}
@@ -37,9 +40,6 @@ class DataLoader:
         
         self.supercomputers: List[Dict] = []
         self.supercomputers_by_id: Dict[str, Dict] = {}
-        self.cpus_by_id: Dict[str, Dict] = {}
-        self.precision_by_id: Dict[str, Dict] = {}
-        self.laptop_gpus_by_id: Dict[str, Dict] = {}
         
         self._load_all()
         self._initialized = True

@@ -224,9 +224,9 @@ def calculate_supercomputer_recommendations(
     # Best: Highest VRAM + compute, practical form factor
     practical_systems = [s for s in scored_systems if s[1].form_factor in ["desktop_sff", "tower_workstation", "rack_server"]]
     if practical_systems:
-        best_system = max(practical_systems, key=lambda x: x[1].total_vram_gb)
+        best_system = max(practical_systems, key=lambda x: x[1].total_vram_gb)[1]
     elif scored_systems:
-        best_system = max(scored_systems, key=lambda x: x[1].total_vram_gb)
+        best_system = max(scored_systems, key=lambda x: x[1].total_vram_gb)[1]
     
     return {
         "minimum": _spec_to_dict(minimum_system) if minimum_system else None,
