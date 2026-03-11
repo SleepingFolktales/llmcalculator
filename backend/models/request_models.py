@@ -12,6 +12,7 @@ class ModelInstanceInput(BaseModel):
     n_instances: int = Field(1, ge=1, description="Number of parallel instances")
     context_tokens: int = Field(4096, ge=512, le=2_000_000, description="Context window per instance")
     quant_preference: Optional[str] = Field(None, description="Force a specific quantization (e.g. Q4_K_M)")
+    precision_format: str = Field("fp16", description="Precision format ID (e.g. fp16, int8, q4_k_m, bitnet_1_58)")
     use_case: Literal["general", "coding", "reasoning", "chat", "embedding", "multimodal"] = "general"
 
 

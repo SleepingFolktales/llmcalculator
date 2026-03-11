@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Plus, Trash2, Play, Info, Search } from 'lucide-react'
 import { useScenarioStore } from '../../store/scenarioStore'
 import ModelSelectorModal from './ModelSelectorModal'
+import PrecisionSelector from './PrecisionSelector'
 
 interface ScenarioBuilderProps {
   onCalculate: () => void
@@ -107,6 +108,13 @@ export default function ScenarioBuilder({ onCalculate, isCalculating }: Scenario
               </select>
             </div>
 
+            {/* Precision Format */}
+            <PrecisionSelector
+              value={instance.precision_format}
+              onChange={(precisionFormat) => updateModelInstance(index, { ...instance, precision_format: precisionFormat })}
+              instanceIndex={index}
+            />
+
             {/* Use Case */}
             <div>
               <div className="flex items-center gap-2 mb-2">
@@ -151,7 +159,13 @@ export default function ScenarioBuilder({ onCalculate, isCalculating }: Scenario
         ))}
 
         <button
-          onClick={() => addModelInstance({ model_name: '', n_instances: 1, context_tokens: 4096, use_case: 'general' })}
+          onClick={() => addModelInstance({
+            model_name: '',
+            n_instances: 1,
+            context_tokens: 4096,
+            precision_format: 'fp16',
+            use_case: 'general',
+          })}
           className="w-full flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg px-4 py-2 transition-colors"
         >
           <Plus className="w-4 h-4" />

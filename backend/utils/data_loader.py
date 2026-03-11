@@ -29,10 +29,12 @@ class DataLoader:
         self.gpus: List[Dict] = []
         self.cpus: List[Dict] = []
         self.ram_specs: List[Dict] = []
+        self.precision_formats: List[Dict] = []
         
         self.models_by_id: Dict[str, Dict] = {}
         self.gpus_by_id: Dict[str, Dict] = {}
         self.cpus_by_id: Dict[str, Dict] = {}
+        self.precision_by_id: Dict[str, Dict] = {}
         
         self._load_all()
         self._initialized = True
@@ -43,6 +45,7 @@ class DataLoader:
         self._load_gpus()
         self._load_cpus()
         self._load_ram()
+        self._load_precision_formats()
     
     def _load_models(self):
         """Load HuggingFace models database."""
@@ -83,6 +86,16 @@ class DataLoader:
                 data = json.load(f)
                 self.ram_specs = data.get("ram_specs", [])
     
+    def _load_precision_formats(self):
+        """Load precision/quantization formats database."""
+        precision_path = DATA_DIR / "precision_formats.json"
+        if precision_path.exists():
+            with open(precision_path, 'r', encoding='utf-8') as f:
+                self.precision_formats = json.load(f)
+            
+            for precision in self.precision_formats:
+                self.precision_by_id[precision["id"]] = precision
+    
     def get_all_models(self) -> List[Dict]:
         """Get all models."""
         return self.models
@@ -95,6 +108,10 @@ class DataLoader:
         """Get all CPUs."""
         return self.cpus
     
+    def get_all_precision_formats(self) -> List[Dict]:
+        """Get all precision formats."""
+        return self.precision_formats
+    
     def get_model_by_id(self, model_id: str) -> Optional[Dict]:
         """Get model by exact ID match."""
         return self.models_by_id.get(model_id)
@@ -106,6 +123,10 @@ class DataLoader:
     def get_cpu_by_id(self, cpu_id: str) -> Optional[Dict]:
         """Get CPU by exact ID match."""
         return self.cpus_by_id.get(cpu_id)
+    
+    def get_precision_by_id(self, precision_id: str) -> Optional[Dict]:
+        """Get precision format by exact ID match."""
+        return self.precision_by_id.get(precision_id)
     
     def search_models(self, query: str, limit: int = 20) -> List[Dict]:
         """Fuzzy search for models."""

@@ -51,6 +51,10 @@ async def calculate_hardware(request: CalculationRequest):
         
         quant = input_instance.quant_preference or model_info["quantization"]
         
+        # Get precision format bytes_per_param
+        precision_format = loader.get_precision_by_id(input_instance.precision_format)
+        bytes_per_param = precision_format["bytes_per_param"] if precision_format else None
+        
         model_instance = ModelInstance(
             model_name=model_info["name"],
             params_b=model_info["params_b"],
@@ -61,6 +65,7 @@ async def calculate_hardware(request: CalculationRequest):
             is_moe=model_info["is_moe"],
             active_params_b=model_info["active_params_b"],
             provider=model_info["provider"],
+            bytes_per_param=bytes_per_param,
         )
         
         model_instances.append(model_instance)

@@ -16,6 +16,7 @@ from contextlib import asynccontextmanager
 from api.routes_calculate import router as calc_router
 from api.routes_models import router as models_router
 from api.routes_hardware import router as hardware_router
+from api.routes_precision import router as precision_router
 from utils.data_loader import get_data_loader
 
 
@@ -28,6 +29,7 @@ async def lifespan(app: FastAPI):
     print(f"Loaded {len(loader.get_all_gpus())} GPUs")
     print(f"Loaded {len(loader.get_all_cpus())} CPUs")
     print(f"Loaded {len(loader.ram_specs)} RAM specs")
+    print(f"Loaded {len(loader.get_all_precision_formats())} precision formats")
     print("Server ready!")
     yield
     print("Shutting down...")
@@ -51,6 +53,7 @@ app.add_middleware(
 app.include_router(calc_router, prefix="/api", tags=["Calculate"])
 app.include_router(models_router, prefix="/api", tags=["Models"])
 app.include_router(hardware_router, prefix="/api", tags=["Hardware"])
+app.include_router(precision_router, prefix="/api", tags=["Precision"])
 
 
 @app.get("/")
@@ -72,6 +75,7 @@ async def health_check():
         "models_loaded": len(loader.get_all_models()),
         "gpus_loaded": len(loader.get_all_gpus()),
         "cpus_loaded": len(loader.get_all_cpus()),
+        "precision_formats_loaded": len(loader.get_all_precision_formats()),
     }
 
 

@@ -7,7 +7,26 @@ export interface ModelInstanceInput {
   n_instances: number
   context_tokens: number
   quant_preference?: string
+  precision_format: string
   use_case: 'general' | 'coding' | 'reasoning' | 'chat' | 'embedding' | 'multimodal'
+}
+
+export interface PrecisionFormat {
+  id: string
+  name: string
+  short_name: string
+  bits: number
+  bytes_per_param: number
+  category: string
+  quality_score: number
+  memory_reduction_pct: number
+  use_case: string
+  pros: string
+  cons: string
+  hardware_requirements: string[]
+  popular: boolean
+  inference_recommended: boolean
+  special_note?: string
 }
 
 export interface CalculationRequest {

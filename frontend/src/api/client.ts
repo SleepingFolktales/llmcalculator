@@ -3,7 +3,7 @@
  */
 
 import axios from 'axios'
-import type { CalculationRequest, CalculationResponse, Model } from '../types/api'
+import type { CalculationRequest, CalculationResponse, Model, PrecisionFormat } from '../types/api'
 
 const api = axios.create({
   baseURL: '/api',
@@ -26,6 +26,16 @@ export const searchModels = async (query: string, limit: number = 20): Promise<M
 
 export const getModel = async (modelId: string): Promise<Model> => {
   const { data } = await api.get<Model>(`/models/${modelId}`)
+  return data
+}
+
+export const getPrecisionFormats = async (): Promise<PrecisionFormat[]> => {
+  const { data } = await api.get<PrecisionFormat[]>('/precision/formats')
+  return data
+}
+
+export const getPrecisionFormat = async (precisionId: string): Promise<PrecisionFormat> => {
+  const { data } = await api.get<PrecisionFormat>(`/precision/formats/${precisionId}`)
   return data
 }
 

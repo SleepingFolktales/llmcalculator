@@ -19,6 +19,7 @@ class ModelInstance:
     is_moe: bool = False
     active_params_b: Optional[float] = None
     provider: str = "Unknown"
+    bytes_per_param: Optional[float] = None
 
 
 @dataclass
@@ -67,6 +68,7 @@ def aggregate_scenario_memory(
             n_instances=instance.n_instances,
             is_moe=instance.is_moe,
             active_params_b=instance.active_params_b,
+            bytes_per_param=instance.bytes_per_param,
         )
         
         if strategy == "concurrent":
