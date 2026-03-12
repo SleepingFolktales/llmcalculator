@@ -5,8 +5,14 @@
 import axios from 'axios'
 import type { CalculationRequest, CalculationResponse, Model, PrecisionFormat } from '../types/api'
 
+// In dev (npm run dev), VITE_API_URL is not set → Vite proxy routes /api to localhost:8000.
+// In Tauri production build, VITE_API_URL=http://127.0.0.1:18420 is baked in at build time.
+const BASE_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api`
+  : '/api'
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
