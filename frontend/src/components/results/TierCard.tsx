@@ -61,7 +61,7 @@ export default function TierCard({ tier }: TierCardProps) {
               <span className="text-sm font-medium text-gray-400">CPU</span>
             </div>
             <div className="text-white font-semibold text-sm">{tier.cpu.name.split(' ').slice(-2).join(' ')}</div>
-            <div className="text-xs text-gray-500 mt-1">{tier.cpu.cores} cores</div>
+            <div className="text-xs text-gray-500 mt-1">{tier.cpu.cores_total} cores</div>
           </div>
         )}
 
