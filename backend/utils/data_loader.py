@@ -3,11 +3,24 @@ Data loader - loads and indexes JSON data files (models, GPUs, CPUs, RAM)
 """
 
 import json
+import sys
 from pathlib import Path
 from typing import Dict, List, Optional
 from functools import lru_cache
 
-DATA_DIR = Path(__file__).parent.parent.parent / "data"
+
+def _resolve_data_dir() -> Path:
+    """
+    Resolve the data directory for both normal and PyInstaller frozen execution.
+    PyInstaller extracts bundled files to sys._MEIPASS; we bundle data/ there.
+    In dev, data/ sits three levels above this utils/ file.
+    """
+    if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
+        return Path(sys._MEIPASS) / "data"
+    return Path(__file__).parent.parent.parent / "data"
+
+
+DATA_DIR = _resolve_data_dir()
 
 
 class DataLoader:

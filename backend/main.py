@@ -46,7 +46,16 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=[
+        # Vite dev server
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        # Tauri v2 webview origin (production desktop)
+        "tauri://localhost",
+        "https://tauri.localhost",
+        # Tauri dev (Windows WebView2 uses http://tauri.localhost)
+        "http://tauri.localhost",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
