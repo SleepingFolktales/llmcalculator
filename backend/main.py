@@ -11,7 +11,10 @@ if str(backend_dir) not in sys.path:
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from contextlib import asynccontextmanager
+import os
 
 from api.routes_calculate import router as calc_router
 from api.routes_models import router as models_router
@@ -55,6 +58,8 @@ app.add_middleware(
         "https://tauri.localhost",
         # Tauri dev (Windows WebView2 uses http://tauri.localhost)
         "http://tauri.localhost",
+        # Production domain
+        "https://calc.airsfoundry.com",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -89,6 +94,23 @@ async def health_check():
         "cpus_loaded": len(loader.get_all_cpus()),
         "precision_formats_loaded": len(loader.get_all_precision_formats()),
     }
+
+
+static_dir = Path(__file__).parent.parent / "static"
+if static_dir.exists():
+    app.mount("/assets", StaticFiles(directory=static_dir / "assets"), name="assets")
+    
+    @app.get("/{full_path:path}")
+    async def serve_frontend(full_path: str):
+        """Serve frontend for all non-API routes (SPA fallback)."""
+        if full_path.startswith("api/"):
+            return {"error": "API endpoint not found"}, 404
+        
+        file_path = static_dir / full_path
+        if file_path.is_file():
+            return FileResponse(file_path)
+        
+        return FileResponse(static_dir / "index.html")
 
 
 if __name__ == "__main__":
