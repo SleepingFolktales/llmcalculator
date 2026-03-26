@@ -72,17 +72,7 @@ app.include_router(hardware_router, prefix="/api", tags=["Hardware"])
 app.include_router(precision_router, prefix="/api", tags=["Precision"])
 
 
-@app.get("/")
-async def root():
-    """Health check endpoint."""
-    return {
-        "status": "ok",
-        "service": "LLMCalculator API",
-        "version": "1.0.0",
-    }
-
-
-@app.get("/health")
+@app.get("/api/health")
 async def health_check():
     """Detailed health check."""
     loader = get_data_loader()
@@ -103,8 +93,12 @@ if static_dir.exists():
     @app.get("/{full_path:path}")
     async def serve_frontend(full_path: str):
         """Serve frontend for all non-API routes (SPA fallback)."""
+        if not full_path or full_path == "":
+            return FileResponse(static_dir / "index.html")
+        
         if full_path.startswith("api/"):
-            return {"error": "API endpoint not found"}, 404
+            from fastapi import HTTPException
+            raise HTTPException(status_code=404, detail="API endpoint not found")
         
         file_path = static_dir / full_path
         if file_path.is_file():
