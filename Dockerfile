@@ -7,8 +7,13 @@ WORKDIR /app/frontend
 COPY frontend/package*.json ./
 RUN npm ci
 
-# Build static files
+# Copy frontend source (exclude .env.production to avoid Tauri config)
 COPY frontend/ ./
+
+# Use Docker-specific env config (no VITE_API_URL for relative paths)
+COPY frontend/.env.docker .env.production
+
+# Build static files
 RUN npm run build
 # Output will be at /app/frontend/dist (Vite default)
 # Change to /app/frontend/.next if you're using Next.js
